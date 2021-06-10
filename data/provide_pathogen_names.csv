@@ -1,0 +1,45 @@
+pathogen_asymptomatic,asym_actual,pathogen_symptomatic,sym_actual
+AL,Ascaris lumbricoides,al,Ascaris lumbricoides
+AERO,Aeromonas,tt,Trichuris trichiura
+ANCYC,Ancyclostoma,ebien,E.bieneusi
+TT,Trichuris trichiura,eint,E.intestinalis
+EBIEN,E.bieneusi,giar,Giardia
+EINT,E.intestinalis,cryp,Cryptosporidium
+CRYP,Cryptosporidium,salmo,Salmonella
+SALMO,Salmonella,hpylo,H.pylori
+HPYLO,H.pylori,campy,Campy Pan
+CAMPY,Campy pan,cjeju,Campy jejuni/coli
+CJEJU,C.jejuni/coli,bfragi,B.fragilis
+BFRAGI,B.fragilis,cdiffic,C.difficile
+Blastocystis,Blastocystis,adeno40,Adenovirus F
+CDIFFIC,C.difficile,norog1,Norovirus GI
+ADENO40,Adenovirus F,norog2,Norovirus GII
+NOROG1,Norovirus GI,opv1,OPV1
+NOROG2,Norovirus GII,astro,Astrovirus
+ASTRO,Astrovirus,rota,Rotavirus
+NECATO,Necator,ancyc,Ancyclostoma
+STRONGY,Strongyloides,necato,Necator
+CYCLO,Cyclospora,strongy,Strongyloides
+ISOSPO,Isospora,cyclo,Cyclospora
+CRYPPAR,Crypto_lib parvum,isospo,Isospora
+CRYPHOM,Crypto_Lib hominis,,
+EH,E.histolytica,cryphom,Crypto_Lib hominis
+MTB,M.tb,cryppar,Crypto_lib parvum
+VCHOL,V.cholerae,eh,E.histolytica
+EIECSH,Shigella & EIEC,mtb,M.tb
+SAPO,Sapovirus,vchol,V.cholerae
+ENTERO,Enterovirus,eiecsh,Shigella & EIEC
+ROTA,Rotavirus,aero,Aeromonas
+OPV1,OPV1,sapo,Sapovirus
+OPV2,OPV2,opv2,OPV2
+OPV3,OPV3,opv3,OPV3
+pan_Entamoeba,pan_Entamoeba,entero,Enterovirus
+Plesiomonas,Plesiomonas,EAEC,EAEC
+Schistosoma,Schistosoma,ST_ETEC,ST_ETEC
+EAEC,EAEC,LT_ETEC,LT_ETEC
+atEPEC,atypical EPEC,tEPEC,typical EPEC
+tEPEC,typical EPEC,atEPEC,atypical EPEC
+STEC,STEC,STEC,STEC
+LT_ETEC,LT_ETEC,ETEC,ETEC
+ST_ETEC,ST_ETEC,,
+ETEC,ETEC,,

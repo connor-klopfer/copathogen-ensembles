@@ -37,3 +37,14 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Specific Data Files, these need to be save locally in the data folder. 
+TAC asymptomatic subset.csv
+TAC diarrheal YR1.csv
+
+copathogen-ensembles.Rproj
+
+# Large Data files 
+*MAL-ED*.txt
+maled_samples_60m_reduced.csv
+

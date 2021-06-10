@@ -1,0 +1,96 @@
+symptomatic Data file variable name,Comment,asymptomatic data file variable name,Variable Description (Cq value for all),Mal-ed Equivalent ,Notes,Include,pathogen_type,Mal-ed 60m Update
+sid,,sid,participant,Participant_Id,,1,NA,Participant_Id
+,,SPECSEQ,specimen sequence (# diarrheal specimen collected),,,0,NA,
+specnum,,,specimen number (clinic stool #),Sample ID OBI_0001616 ,,0,NA,Sample ID OBI_0001616 
+Ascaris,,AL,Ascaris lumbricoides          ,Ascaris Ct value by TAC result EUPATH_0015334 ,,1,nematode,Ascaris Ct value by TAC result EUPATH_0015334 
+Aeromonas,,AERO,Aeromonas,Aeromonas Ct value by TAC result EUPATH_0015332 ,,1,bacteria,Aeromonas Ct value by TAC result EUPATH_0015332 
+Ancyclostoma,,ANCYC,Ancyclostoma  ,Ancylostoma Ct value by TAC result EUPATH_0015333 ,Spelling is different,1,nematode,Ancylostoma Ct value by TAC result EUPATH_0015333 
+Trichuris,,TT,Trichuris trichiura ,Trichuris Ct value by TAC result EUPATH_0015387 ,,1,nematode,"Trichuris trichiura Ct value, by TAC result EUPATH_0015387 "
+E_bieneusi,,EBIEN,E.bieneusi ,Enterocytozoon bieneusi Ct value by TAC result EUPATH_0015350 ,,1,fungus,Enterocytozoon bieneusi Ct value by TAC result EUPATH_0015350 
+E_intestinalis,,EINT,E.intestinalis,Encephalitozoon intestinalis Ct value by TAC result EUPATH_0015352 ,,1,fungus,Encephalitozoon intestinalis Ct value by TAC result EUPATH_0015352 
+Giardia_A,Not reliable on asympto cards,,,Giardia assemblage A Ct value by TAC result EUPATH_0015358 ,,0,protozoa,Giardia assemblage A Ct value by TAC result EUPATH_0015358 
+Giardia_B,Not reliable on asympto cards,,,Giardia assemblage B Ct value by TAC result EUPATH_0015359 ,,0,protozoa,Giardia assemblage B Ct value by TAC result EUPATH_0015359 
+giar,Not reliable on asympto cards,GIAR,Giardia,Giardia Ct value by TAC result EUPATH_0015360 ,,1,protozoa,Giardia Ct value by TAC result EUPATH_0015360 
+Cryptosporidium,,CRYP,Cryptosporidium,Cryptosporidium Ct value by TAC result EUPATH_0015342 ,,1,protozoa,Cryptosporidium Ct value by TAC result EUPATH_0015342 
+Cryptosporidium_hominis,,,,Cryptosporidium hominis Ct value by TAC result EUPATH_0015343 ,,0,protozoa,Cryptosporidium hominis Ct value by TAC result EUPATH_0015343 
+Salmonella,,SALMO,Salmonella,Salmonella Ct value by TAC result EUPATH_0015381 ,,1,bacteria,Salmonella Ct value by TAC result EUPATH_0015381 
+H_pylori,,HPYLO,H.pylori,Helicobacter pylori Ct value by TAC result EUPATH_0015361 ,,1,bacteria,Helicobacter pylori Ct value by TAC result EUPATH_0015361 
+Campylobacter_jejuni_coli,,CJEJU,C.jejuni/coli,Campylobacter jejuni or C coli Ct value by TAC result EUPATH_0015341 ,,1,bacteria,Campylobacter jejuni or C coli Ct value by TAC result EUPATH_0015341 
+Campylobacter_pan,,CAMPY,Campy PAN,Campylobacter Ct value by TAC result EUPATH_0015338 ,,1,bacteria,Campylobacter Ct value by TAC result EUPATH_0015338 
+B_fragilis,,BFRAGI,B.fragilis,Bacteriodes fragilis Ct value by TAC result EUPATH_0015337 ,,1,bacteria,Bacteroides fragilis Ct value by TAC result EUPATH_0015337 
+Blastocystis,,,,Blastocystis Ct value by TAC result EUPATH_0011854 ,,0,eukaryote,Blastocystis Ct value by TAC result EUPATH_0011854 
+C_difficile,,CDIFFIC,C.difficile,Clostridium difficile Ct value by TAC result EUPATH_0011855 ,,1,bacteria,Clostridium difficile Ct value by TAC result EUPATH_0011855 
+Adenovirus_40_41,,ADENO40,Adenovirus F,Adenovirus 40 41 Ct value by TAC result EUPATH_0015331 ,,1,virus,Adenovirus 40 41 Ct value by TAC result EUPATH_0015331 
+Adenovirus_pan,,ADENO,Adenovirus Pan,Adenovirus Ct value by TAC result EUPATH_0015330 ,,0,virus,Adenovirus Ct value by TAC result EUPATH_0015330 
+Norovirus_GI,,NOROG1,Norovirus GI,Norovirus GI Ct value by TAC result EUPATH_0015364 ,,1,virus,Norovirus GI Ct value by TAC result EUPATH_0015364 
+Norovirus_GII,,NOROG2,Norovirus GII ,Norovirus GII Ct value by TAC result EUPATH_0015365 ,,1,virus,Norovirus GII Ct value by TAC result EUPATH_0015365 
+Norovirus_GI_1,,,,Norovirus GI 1 Ct value by TAC result EUPATH_0011866 ,,0,virus,Norovirus GI 1 Ct value by TAC result EUPATH_0011866 
+Norovirus_GII_4,,,,Norovirus GII 4 Ct value by TAC result EUPATH_0011867 ,,0,virus,Norovirus GII 4 Ct value by TAC result EUPATH_0011867 
+Astrovirus,,ASTRO,Astrovirus,Astrovirus Ct value by TAC result EUPATH_0015335 ,,1,virus,Astrovirus Ct value by TAC result EUPATH_0015335 
+Necator,,NECATO,Necator ,Necator Ct value by TAC result EUPATH_0015363 ,,1,nematode,Necator Ct value by TAC result EUPATH_0015363 
+Strongyloides,,STRONGY,Strongyloides,Strongyloides Ct value by TAC result EUPATH_0015386 ,,1,nematode,Strongyloides Ct value by TAC result EUPATH_0015386 
+Cyclospora,,CYCLO,Cyclospora ,Cyclospora Ct value by TAC result EUPATH_0015345 ,,1,eukaryote,Cyclospora Ct value by TAC result EUPATH_0015345 
+Isospora,,ISOSPO,Isospora,Isospora Ct value by TAC result EUPATH_0015362 ,,1,eukaryote,Isospora Ct value by TAC result EUPATH_0015362 
+,,CRYPHOM,Crypto_Lib hominis,Cryptosporidium hominis Ct value by TAC result EUPATH_0015343 ,,1,eukaryote,Cryptosporidium hominis Ct value by TAC result EUPATH_0015343 
+Cryptosporidium_parvum,,CRYPPAR,Crypto_lib parvum,Cryptosporidium parvum Ct value by TAC result EUPATH_0015344 ,,1,eukaryote,Cryptosporidium parvum Ct value by TAC result EUPATH_0015344 
+E_histolytica,,EH,E.histolytica,Entamoeba histolytica Ct value by TAC result EUPATH_0015351 ,,1,entamoeba,Entamoeba histolytica Ct value by TAC result EUPATH_0015351 
+M_tuberculosis,,MTB,M.tb,Mycobacterium tuberculosis Ct value by TAC result EUPATH_0011865 ,,1,bacteria,Mycobacterium tuberculosis Ct value by TAC result EUPATH_0011865 
+V_cholerae,,VCHOL,V.cholerae,Vibrio cholerae Ct value by TAC result EUPATH_0015388 ,,1,bacteria,Vibrio cholerae Ct value by TAC result EUPATH_0015388 
+Shigella_EIEC,,EIECSH,Shigella & EIEC ,Shigella or EIEC Ct value by TAC result EUPATH_0015383 ,,1,bacteria,Shigella or EIEC Ct value by TAC result EUPATH_0015383 
+Sapovirus,,SAPO,Sapovirus,Sapovirus Ct value by TAC result EUPATH_0015382 ,,1,virus,Sapovirus Ct value by TAC result EUPATH_0015382 
+entero,,ENTERO,Enterovirus,,,0,virus,
+Rotavirus,,ROTA,Rotavirus,Rotavirus Ct value by TAC result EUPATH_0015366 ,,1,virus,Rotavirus Ct value by TAC result EUPATH_0015366 
+Sabin_1,,OPV1,OPV1,not present,,1,vaccine,not present
+Sabin_2,,OPV2,OPV2,not present,,1,vaccine,not present
+Sabin_3,,OPV3,OPV3,not present,,1,vaccine,not present
+pan_Entamoeba,,,,Entamoeba Ct value by TAC result EUPATH_0011856 ,,0,,Entamoeba Ct value by TAC result EUPATH_0011856 
+Plesiomonas,,,,Plesiomonas Ct value by TAC result EUPATH_0011868 ,,0,,Plesiomonas Ct value by TAC result EUPATH_0011868 
+Schistosoma,,,,Schistosoma Ct value by TAC result EUPATH_0011870 ,,0,,Schistosoma Ct value by TAC result EUPATH_0011870 
+EAEC,derived Cqs,EAEC,EAEC,EAEC_Ct_value_custom,,1,bacteria,EAEC_Ct_value_custom
+atEPEC,derived Cqs,atEPEC,atypical EPEC,atepec_Ct_value_custom,,1,bacteria,atepec_Ct_value_custom
+tEPEC,derived Cqs,tEPEC,typical EPEC,tepec_Ct_value_custom,,1,bacteria,tepec_Ct_value_custom
+STEC,derived Cqs,STEC,STEC,stec_Ct_value_custom,,1,bacteria,stec_Ct_value_custom
+LT_ETEC,derived Cqs,LT_ETEC,LT_ETEC,lt_etec_Ct_value_custom,,1,bacteria,lt_etec_Ct_value_custom
+ST_ETEC,derived Cqs,ST_ETEC,ST_ETEC,st_etec_Ct_value_custom,,1,bacteria,st_etec_Ct_value_custom
+ETEC,derived Cqs,ETEC,ETEC,etec_Ct_value_custom,,1,bacteria,etec_Ct_value_custom
+EPEC_bfpA,sub-target only needed to derive main Ecolis ,EPECBF,EPEC_bfpA,EPEC bfpA Ct value by TAC result EUPATH_0015353 ,,0,,EPEC bfpA Ct value by TAC result EUPATH_0015353 
+ETEC_LT,sub-target only needed to derive main Ecolis ,ETECLT,ETEC_LT ,ETEC LT pos Ct value by TAC result EUPATH_0015355 ,,0,,ETEC LT pos Ct value by TAC result EUPATH_0015355 
+STEC_stx1,sub-target only needed to derive main Ecolis ,STECST1,STEC_stx1,STEC stx1 Ct value by TAC result EUPATH_0015384 ,,0,,STEC stx1 Ct value by TAC result EUPATH_0015384 
+STEC_stx2,sub-target only needed to derive main Ecolis ,STECST2,STEC_stx2,STEC stx2 Ct value by TAC result EUPATH_0015385 ,,0,,STEC stx2 Ct value by TAC result EUPATH_0015385 
+EPEC_eae,sub-target only needed to derive main Ecolis ,EPECEA,EPEC_eae,EPEC eae Ct value by TAC result EUPATH_0011857 ,,0,,EPEC eae Ct value by TAC result EUPATH_0011857 
+ETEC_STh,sub-target only needed to derive main Ecolis ,ETECSTH,ETEC_STh,ETEC STh Ct value by TAC result EUPATH_0015356 ,,0,,ETEC STh Ct value by TAC result EUPATH_0015356 
+ETEC_STp,sub-target only needed to derive main Ecolis ,ETECSTP,ETEC_STp,ETEC STp Ct value by TAC result EUPATH_0015357 ,,0,,ETEC STp Ct value by TAC result EUPATH_0015357 
+EAEC_aaiC,sub-target only needed to derive main Ecolis ,EAECIC,EAEC_aaiC,EAEC aaiC Ct value by TAC result EUPATH_0015346 ,,0,,EAEC aaiC Ct value by TAC result EUPATH_0015346 
+EAEC_aatA,sub-target only needed to derive main Ecolis ,EAECAT,EAEC_aatA ,EAEC aatA Ct value by TAC result EUPATH_0015348 ,,0,,EAEC aatA Ct value by TAC result EUPATH_0015348 
+EAEC_aar,,EAECAR,EAEC_aar,EAEC aggR activated regulator aar Ct value by TAC result EUPATH_0011892 ,,0,,EAEC aggR activated regulator aar Ct value by TAC result EUPATH_0011892 
+EAEC_aggR,,EAECAG,EAEC_aggR ,EAEC aggR Ct value by TAC result EUPATH_0015349 ,,0,,EAEC aggR Ct value by TAC result EUPATH_0015349 
+ETEC_CFA,,,,ETEC CFA1 Ct value by TAC result EUPATH_0011858 ,,0,,ETEC CFA1 Ct value by TAC result EUPATH_0011858 
+ETEC_CS1,,,,ETEC CS1 Ct value by TAC result EUPATH_0011859 ,,0,,ETEC CS1 Ct value by TAC result EUPATH_0011859 
+ETEC_CS2,,,,ETEC CS2 Ct value by TAC result EUPATH_0011860 ,,0,,ETEC CS2 Ct value by TAC result EUPATH_0011860 
+ETEC_CS3,,,,ETEC CS3 Ct value by TAC result EUPATH_0011861 ,,0,,ETEC CS3 Ct value by TAC result EUPATH_0011861 
+ETEC_CS5,,,,ETEC CS5 Ct value by TAC result EUPATH_0011862 ,,0,,ETEC CS5 Ct value by TAC result EUPATH_0011862 
+ETEC_CS6,,,,ETEC CS6 Ct value by TAC result EUPATH_0011863 ,,0,,ETEC CS6 Ct value by TAC result EUPATH_0011863 
+Rotavirus_G12,,ROTAG12,Rotavirus G12,Rotavirus genotype G12 Ct value by TAC result EUPATH_0015368 ,,0,,Rotavirus genotype G12 Ct value by TAC result EUPATH_0015368 
+Rotavirus_G4,,ROTAG4,Rotavirus G4,Rotavirus genotype G4 Ct value by TAC result EUPATH_0015372 ,,0,,Rotavirus genotype G4 Ct value by TAC result EUPATH_0015372 
+,,ROTAG10,Rotavirus G10 ,,,0,,
+Rotavirus_G3,,ROTAG3,Rotavirus G3,Rotavirus genotype G3 Ct value by TAC result EUPATH_0015371 ,,0,,Rotavirus genotype G3 Ct value by TAC result EUPATH_0015371 
+Rotavirus_G2,,ROTAG2,Rotavirus G2,Rotavirus genotype G2 Ct value by TAC result EUPATH_0015370 ,,0,,Rotavirus genotype G2 Ct value by TAC result EUPATH_0015370 
+Rotavirus_G9,,ROTAG9,Rotavirus G9 ,Rotavirus genotype G9 Ct value by TAC result EUPATH_0015374 ,,0,,Rotavirus genotype G9 Ct value by TAC result EUPATH_0015374 
+Rotavirus_G1,,ROTAG1,Rotavirus G1,Rotavirus genotype G1 Ct value by TAC result EUPATH_0015369 ,,0,,Rotavirus genotype G1 Ct value by TAC result EUPATH_0015369 
+Rotavirus_G8,,ROTAG8,Rotavirus G8,Rotavirus genotype G8 Ct value by TAC result EUPATH_0015373 ,,0,,Rotavirus genotype G8 Ct value by TAC result EUPATH_0015373 
+,,ROTAP11,Rotavirus P11,,,0,,
+Rotavirus_P8,,ROTAP8,Rotavirus P8 ,Rotavirus genotype P8 Ct value by TAC result EUPATH_0015379 ,,0,,Rotavirus genotype P8 Ct value by TAC result EUPATH_0015379 
+,,ROTAP10,Rotavirus P10,,,0,,
+Rotavirus_P6,,ROTAP6,Rotavirus P6 ,Rotavirus genotype P6 Ct value by TAC result EUPATH_0015378 ,,0,,Rotavirus genotype P6 Ct value by TAC result EUPATH_0015378 
+Rotavirus_P4,,ROTAP4,Rotavirus P4,Rotavirus genotype P4 Ct value by TAC result EUPATH_0015377 ,,0,,Rotavirus genotype P4 Ct value by TAC result EUPATH_0015377 
+,,ROTAP9,Rotavirus P9,,,0,,
+PanEV,,,,,,0,,
+PANPV,,,,,,0,,
+gLOW,,,,,,0,,
+Shigella_flexneri_6,,,,,,0,,
+Shigella_flexneri_non6,,,,,,0,,
+Shigellasonnei,,,,,,0,,
+Shigella_clade_1,,,,,,0,,
+H_nana,,,,,,0,,
+ageatepi,,agedays,age,Age (days) [EUPATH_0000579] ,,1,,Age (days) [EUPATH_0000579] 
+specdt,,specdt,collection_date,Sample Collection Date OBI_0001619 ,,1,,Observation date [EUPATH_0004991] 
