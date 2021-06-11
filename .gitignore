@@ -41,6 +41,11 @@ vignettes/*.pdf
 # Specific Data Files, these need to be save locally in the data folder. 
 TAC asymptomatic subset.csv
 TAC diarrheal YR1.csv
+copath_fractions_maled_provide_env_Oct20.csv
+provide_missed_specs.csv
+
+# Result Files, I'm not sure if these should be public right now. 
+results/
 
 copathogen-ensembles.Rproj
 
