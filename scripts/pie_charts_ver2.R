@@ -6,8 +6,11 @@
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
-library(TGIRcopathogen)
+library(copathogenTools)
 
+source("scripts/load_all_results.R", echo = F)
+
+MINIMUM_CO <- 10
 
 ##### Functions #####
 
@@ -22,7 +25,7 @@ pie_plot_all_subsets <- function(d_f, original){
                              my_plot_title = "Bacteria + virus pairs and their burden of diarrhea", 
                              my_caption = "One virus + virus pair included.")
   # plot all. 
-  pdf('../figures/copathogen_pie_charts_ver4.pdf', onefile = TRUE, height = 20, 
+  pdf('figures/copathogen_pie_charts.pdf', onefile = TRUE, height = 20, 
       width = 20)
   grid.arrange(
     bb_plot,
@@ -42,7 +45,7 @@ pie_plot_all_subsets <- function(d_f, original){
     nrow = 2
   )
   
-  ggsave(file = '../figures/copathogen_pie_charts_ver4_photo.png', height = 20,
+  ggsave(file = 'figures/copathogen_pie_charts_photo.png', height = 20,
          width = 20, plot = png_vers)
   
 }
@@ -511,9 +514,8 @@ pre_pie_data_prep <- function(d_f){
 }
 ##### Data Import 
 original_df <- import_complete_datasets(parent_dir = "data/") %>% combine_like_pathogens()
-all_simple_results <- get_all_simple_results(original_df, parent_dir = "data/vacc_trained/appended_datatables/EXP_")
+all_simple_results <- get_all_simple_results(original_df, parent_dir = "results/pooled_samples/EXP_")
 
 all_simple_results %>% pre_pie_data_prep() %>% 
   pie_plot_all_subsets(original_df)
-
 ##### 
