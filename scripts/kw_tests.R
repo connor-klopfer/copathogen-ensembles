@@ -1030,9 +1030,6 @@ pair_bins_bystool_dropped <- copath_relationship_summary(
            "stool_type"
            )) 
 
-
-
-
 pair_bins_bystool_dropped_nonfilled <- copath_relationship_summary(
   all_simple_results, original_df,
   by_stool = T, fill_missing = F) %>% 
@@ -1107,7 +1104,12 @@ kw_pooled_dropped <- pooled_dropped_participants %>% test_kw_tests(kw_comparison
 
 
 my_kw_plots <- function(d_f){
-  final <- d_f %>% 
+  final <- d_f %>%
+    mutate(tag = factor(tag, levels = c(
+      "both", 
+      "not_concurrent", 
+      "either", 
+      "neither"))) %>% 
     rename(measurement_ave = ave) %>%
     mutate(sig_label = case_when(pr_f < 0.05 ~ "*", TRUE ~""), 
            study_v = case_when(study_v == "maled" ~ "MAL-ED", study_v == "provide" ~ "PROVIDE")) %>% 
@@ -1132,12 +1134,37 @@ my_kw_plots <- function(d_f){
               color = "black")+
     coord_flip()+
     scale_fill_manual(
-      labels = c("both" = "Both", "either" = "Either", "neither" = "Neither", "not_concurrent" = "Not Concurrent"),
-      values = c("#a6cee3", "#1f78b4", "#b2df8a",  "#33a02c"))+
+      labels = c(
+        "both" = "Concurrent co-infection", 
+        "not_concurrent" = "Both, non concurrent",
+        "either" = "Either pathogen", 
+        "neither" = "Neither pathogen"
+        ),
+      values = c(
+        "#F4A261", # DarkOrange
+        "#FAD3B3", # LightOrange
+        "#70CDFF", # Lightblue
+        "#0077B6") # Darkblue
+    )+
     scale_color_manual(
-      labels = c("both" = "Both", "either" = "Either", "neither" = "Neither", "not_concurrent" = "Not Concurrent"),
-      values = c("#a6cee3", "#1f78b4", "#b2df8a",  "#33a02c"))+
+      labels = c(
+      "both" = "Concurrent co-infection", 
+      "not_concurrent" = "Both, non concurrent",
+      "either" = "Either pathogen", 
+      "neither" = "Neither pathogen"
+        ),
+      values = c(
+        "#F4A261", # DarkOrange
+        "#FAD3B3", # LightOrange
+        "#70CDFF", # Lightblue
+        "#0077B6") # Darkblue
+      )+
     scale_alpha_manual(values =c(0.2, 0.99),limits =c("", "*"), labels = c("> 0.05", "< 0.05"))+
+    # scale_x_discrete(levels = c(
+    #   "both", 
+    #   "not_concurrent", 
+    #   "either", 
+    #   "neither"))+
     theme(strip.background.y = element_blank(), 
           strip.text.y = element_blank(), 
           panel.background = element_rect(fill = 'gray99'), 
@@ -1148,6 +1175,7 @@ my_kw_plots <- function(d_f){
     #            scales = "free_y"
     #            )+
     facet_grid(combined~study_v, scales = "free_y")+
+    
     labs(y = "Number of Days of Diarrhea", x = "",  fill = "Pathogen found in:", alpha = "KW P Value")
   return(final)
 }
@@ -1200,7 +1228,7 @@ interaction_types <- all_simple_results %>% rowwise() %>%
             my_kw_plots() +
             labs(title = "Bacteria + Bacteria Pairs")
           ggsave(path = "figures", filename = "BB_kw_plot.png", device = "png")
-                 dev.off()
+                 # dev.off()
                  
           temp_plot<- temp_source_data %>%
              # filter(study_v == s#, 
@@ -1211,7 +1239,7 @@ interaction_types <- all_simple_results %>% rowwise() %>%
              my_kw_plots() +
              labs(title = "Bacteria + Virus Pairs")
            ggsave(path = "figures", filename = "BV_kw_plot.png", device = "png")
-           dev.off()
+           # dev.off()
         # }
 
       # }
