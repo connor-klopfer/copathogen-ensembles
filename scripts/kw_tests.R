@@ -20,17 +20,6 @@ source("scripts/load_all_results.R", echo = F)
 MINIMUM_CO <- 10
 
 ##### Functions ##### 
-#' get_shared_sig_pairs <- function(pairs){
-#'   #' Deprecated: We moved away from thresholding by significance. 
-#'   return(pairs %>%
-#'            filter(Flag > 0) %>%
-#'            filter_out_symmetric() %>%
-#'            # filter_out_redundancies() %>%
-#'            mutate(direction = ifelse(actual > average, "Higher", "Lower")) %>%
-#'            group_by(stool_type, path1, path2, direction) %>%
-#'            summarise(count = n()) %>% filter(count > 1))
-# }
-
 
 rank_pathogen_pairs <- function(all_results){
   return(
@@ -46,12 +35,10 @@ rank_pathogen_pairs <- function(all_results){
       mutate(percentile_rank_n = percentile_rank/max(percentile_rank), # Normalise percentile rank
              distance_rank_n = distance_rank/max(distance_rank)) %>%  # Normalise distance rank 
       mutate(top10_distance = distance_rank < max(distance_rank) * 0.1) %>% # Flag if it's the top 10 distance 
-      # mutate(direction = ifelse(actual > average, "Higher", "Lower")) %>%
       group_by(stool_type, path1, path2, 
                # direction
                ) %>%
       mutate(count = n()) %>% 
-      # filter(count > 1) %>%
       ungroup() %>% group_by(stool_type, path1, path2) %>% mutate(ave_rank  = mean(distance_rank_n)) %>% 
       ungroup()
   )
@@ -415,7 +402,7 @@ pivot_sid_fraction_wide <- function(d_f, observations_df, co_results){
       by = "participant")%>% 
     left_join(
       observations %>% 
-        filter(`Age (days) [EUPATH_0000579]` < 372) %>% group_by(Participant_Id) %>% 
+        filter(`Age (days) [EUPATH_0000579]` <= 372) %>% group_by(Participant_Id) %>% 
         summarise(max_days = max(`Cumulative days within diarrheal episodes [EUPATH_0010480]`, na.rm = T)) %>% 
         rename(participant = Participant_Id, n_days_diarrhea_episode = max_days),
       by = "participant"
@@ -603,6 +590,17 @@ add_maled_env <- function(samples_data, samples_f, obs, participants, households
 } 
 
 determine_designation <- function(path1, path2){
+  #'@title Pathogen Relatioship for a single stool style 
+  #'
+  #'@description To be called within a mutate function to determine the designation of 
+  #'a single stool, indicating one or the other, both or neither pathogen. 
+  #'
+  #'@param path1 : Column of pathogen 1, with 1 indicating present and 0 indicating absent
+  #'@param path2 : Same as path1
+  #'
+  #'@return Character column, indicating wheter that stool had both, neighter, or one or 
+  #'the other pathogen. 
+  #'
   final <- rep("ERROR", length(path1))
   final[which(path1 > 0 & path2 > 0)] <- "both"
   final[which(path1 > 0 & path2 == 0)] <- "path1"
@@ -612,6 +610,11 @@ determine_designation <- function(path1, path2){
 }
 
 condense_participants <- function(labels){
+  #' @title Condense pathogen relationship by participant 
+  #' 
+  #' @description To be called within a dplyr::mutate function, grouped by individual participants. 
+  #' Condenses the stool designation returned by \code{determine_designation()} to 
+  #' either, neither, both, non-concurrent for a participant. 
   if("both" %in% labels){
     return("both")
   }else if(("path1" %in% labels) & ("path2" %in% labels)){
@@ -636,8 +639,6 @@ copath_relationship_summary <- function(pairs, original, by_stool = F, fill_miss
   # Get the target pathogens 
   sig_pairs <- pairs %>%
     select_target_pathogens() %>% 
-    # get_top_ranked_pathogens(shared = T) %>% 
-    # get_shared_sig_pairs(pairs) %>% 
     ungroup() %>% distinct(path1, path2)
   
   pair_list <- list()
@@ -950,7 +951,7 @@ two_var_coloring <- c("#1f78b4", "#67D067")
 ##### DATA IMPORT #####
 # Import the needed data, original dataset and simple results
 original_df <- import_complete_datasets(parent_dir = "data/") %>% combine_like_pathogens()
-all_simple_results <- get_all_simple_results(original_df, parent_dir = "results/pooled_samples/EXP_")
+all_simple_results <- get_all_simple_results(original_df, parent_dir = "results/pooled_samples")
 # 
 # MAL-ED
 ontology <- data.table::fread("data/ISASimple_Gates_MAL-ED_phase3_RSRC_ontologyMetadata.txt")
@@ -1119,7 +1120,7 @@ my_kw_plots <- function(d_f){
     # group_by(combined) %>% 
     # mutate(facet_idx = seq(nrow(.))) %>% View()
     # mutate(combined = factor(combined, levels = unique(reorder(combined, ave_rank)))) %>% 
-    ggplot(aes(x = combined, ))+
+    ggplot(aes(x = combined ))+
     geom_bar(
       aes(
         fill = tag, color = tag,y = measurement_ave
@@ -1127,7 +1128,10 @@ my_kw_plots <- function(d_f){
         ),
       width = 0.8, 
       color = "black",
-      stat = "identity", position = position_dodge(width = 0.8))+
+      stat = "identity", 
+      position = position_dodge2(
+        # width = 0.8, 
+        reverse = T))+
     # geom_label(aes(label = round(measurement_ave, 2)), position = position_dodge2(width = 0.8))+
     geom_text(aes(label = sig_label, y = max(measurement_ave, na.rm = T) + 1, group = combined), 
               # position = position_dodge(width = 0.8), 
@@ -1194,11 +1198,11 @@ interaction_types <- all_simple_results %>% rowwise() %>%
         select_target_pathogens() %>%
       # get_top_ranked_pathogens(all_simple_results, shared = T) %>% 
         select(path1, path2, 
-               stool_type,
+               # stool_type,
                # direction, 
                study, 
                # ave_rank
-               ) %>% 
+               ) %>% distinct() %>%  
         # arrange(ave_rank) 
       mutate(facet_idx = seq(nrow(.))), 
       by = c("path1", "path2", 
@@ -1211,7 +1215,7 @@ interaction_types <- all_simple_results %>% rowwise() %>%
       #          # direction
       #          ) %>% mutate(facet_idx = mean(facet_idx, na.rm = T)) %>% ungroup() %>% 
       readable_path_names() %>% 
-      mutate(combined = paste(path1, path2, sep = " + "))
+      mutate(combined = paste(path1, path2, sep = " + ")) %>% distinct()
     
     
     # for(s in unique(temp_source_data$study_v)){
@@ -1247,3 +1251,57 @@ interaction_types <- all_simple_results %>% rowwise() %>%
     
   
 # }
+           
+kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
+  #' @title KW final plots 
+  #' 
+  #' @description Plot the final results for the KW plots. Used for different 
+  #' versions of the plot 
+  #' 
+  #' @param kw_data : Results from the Kruskal-Wallis test. 
+  #' 
+  #' @param all_results_data : Results from the configuration model, contains all the pathogens 
+  #' and the percentiles.
+  #' 
+  #' @param plot_title : String for the plot of the title. 
+  
+  temp_source_data <- kw_data %>%
+    left_join(
+      all_results_data %>% 
+        select_target_pathogens() %>%
+        select(path1, path2, 
+               study, 
+        ) %>% distinct() %>%  
+        mutate(facet_idx = seq(nrow(.))), 
+      by = c("path1", "path2", 
+             "study_v" = "study")
+    ) %>% 
+    rowwise() %>% 
+    mutate(interaction_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
+    readable_path_names() %>% 
+    mutate(combined = paste(path1, path2, sep = " + ")) %>% distinct()
+  
+
+  temp_plot<- temp_source_data %>%
+    filter((interaction_type == "bacteria + bacteria" | combined == "EPEC + Cryptosporidium spp.")) %>%
+    my_kw_plots() +
+    labs(title = paste(plot_title, "Bacteria + Bacteria Pairs"))
+  ggsave(path = "figures", filename = paste0("BB_", plot_filename, ".png"), device = "png")
+  
+  temp_plot<- temp_source_data %>%
+    filter(interaction_type == "bacteria + viruses" | combined == "Norovirus GII + Astrovirus") %>%
+    my_kw_plots() +
+    labs(title = "Bacteria + Virus Pairs")
+  ggsave(path = "figures", filename = paste0("BV_", plot_filename, ".png"), device = "png")
+  
+  
+}
+
+kw_plots(kw_pooled_dropped, all_simple_results, "Pooled", "pooled_samples")
+
+kw_plots(kw_bystool_dropped %>% filter(stool == "Diarrhea"), all_simple_results, "By Stool", "bystool_diarrhea")
+
+kw_plots(kw_bystool_dropped %>% filter(stool == "Asymptomatic"), all_simple_results, "By Stool", "bystool_asymptomatic")
+
+           
+          # Change to a function 

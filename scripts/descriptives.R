@@ -2,7 +2,6 @@
 
 library(dplyr)
 library(ggplot2)
-
 library(copathogenTools)
 
 ##### Functions ##### 
@@ -51,8 +50,7 @@ two_var_coloring <- c("#1f78b4", "#67D067")
 
 complete_data <- import_complete_datasets(bangladesh_only = T, parent_dir = "data/")
 
-
-complete_data %>%
+prevalence_plot <- complete_data %>%
   combine_like_pathogens() %>% 
   select(c("participant", "study", "stool_type", select_target_pathogens())) %>%
   group_by(study) %>% mutate(n_obs = n()) %>% ungroup() %>% 
@@ -77,27 +75,41 @@ complete_data %>%
         strip.background = element_rect(fill = "white"), 
         axis.text = element_text(size = rel(1.3)),
         strip.text = element_text(size = rel(1.1)))
+png(file.path("figures", "path_prevalence.png"))
+print(prevalence_plot)
+dev.off()
+# ggsave(, print(prevalence_plot))
+
+print("Number of Participants in dataset:")
+complete_data %>% 
+  group_by(study) %>% 
+  summarise(`Number of Participants` = n_distinct(participant))
+
+print("Number of observations")
+complete_data %>% 
+  group_by(study, stool_type) %>% 
+  summarise(`Number of stools` = n())
 
 
 # Objective: Number of pathogens a participant encountered during the first year of life. 
+print("Number of Pathogens Per Participant in the First Year of Life")
 complete_data %>% 
   combine_like_pathogens() %>%
   select(-bin_12) %>% 
   group_by(study, stool_type) %>% mutate(total_stools = n()) %>% ungroup() %>% 
   tidyr::pivot_longer(-c("participant", "study", "stool_type", "age", "collection_date", "observation_id", "country", "total_stools"), 
                       names_to = 'pathogen', values_to = 'present') %>% 
-  # mutate(appended = paste(observation_id, participant, age, sep = "")) %>% 
   ungroup() %>% 
   filter(present > 0) %>% 
   group_by(study, participant) %>% 
   summarise(n_pathogens = n_distinct(pathogen), total_stools = mean(total_stools)) %>%    # Count the number of pathogens for a single stool
   ungroup() %>% group_by(study) %>% 
-  summarise(ave_n_participants = mean(n_pathogens), sd_n_pathogens = sd(n_pathogens))
+  summarise(`AVE Number of Pathogens` = mean(n_pathogens), `SD Number of Pathogens Per Participant` = sd(n_pathogens))
 
-
+# Percent greater or equal to 2 pathogens in the first year of life. 
+print("Percent of Participants with greater or equal to 2 pathogens")
 complete_data %>% 
   combine_like_pathogens() %>% 
-  # select(c("participant", "study", "stool_type", 'observation_id', 'age', any_of(c(path_select, "epec")) %>%
   select(-bin_12) %>% 
   group_by(study, stool_type) %>% mutate(total_stools = n()) %>% ungroup() %>% 
   tidyr::pivot_longer(-c("participant", "study", "stool_type", "age", "collection_date", "observation_id", "country", "total_stools"), 
@@ -108,3 +120,21 @@ complete_data %>%
   mutate(greater_than_2 = n_pathogens >= 2) %>% 
   ungroup() %>% group_by(study, stool_type) %>%  
   summarise(percent_greater_2 = sum(greater_than_2) / n())
+
+
+# Mean number of Co-pathogens per stools and the standard deviation of stools . 
+print("Mean number of Pathogens per stool and SDEV number of pathogens")
+complete_data %>% 
+  combine_like_pathogens() %>% 
+  tidyr::pivot_longer(-all_of(c("participant", "study", "stool_type", "age", "collection_date", "observation_id", "country", "bin_12")), 
+                      names_to = 'pathogen', values_to = 'present') %>% 
+  group_by(stool_type, study, observation_id) %>% 
+  summarise(n_pathogens = sum(present)) %>% 
+  ungroup() %>% 
+  group_by(stool_type, study) %>% 
+  summarise(`Mean Number of pathogens` = mean(n_pathogens), `STDEV number of pathogens` = sd(n_pathogens)) 
+
+
+
+  
+  

@@ -46,6 +46,8 @@ provide_missed_specs.csv
 
 # Result Files, I'm not sure if these should be public right now. 
 results/
+data/null_ensembles
+
 
 copathogen-ensembles.Rproj
 

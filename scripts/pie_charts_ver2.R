@@ -19,34 +19,36 @@ pie_plot_all_subsets <- function(d_f, original){
   
   bb_plot <- plot_pie_chart(d_f, original, 
                             plot_pair_type = "bacteria + bacteria", 
-                            my_plot_title = "Bacteria + bacteria pairs and their burden of diarrhea", 
-                            my_caption = "One bacteria + parasite pair included.")
+                            my_plot_title = "Bacteria + bacteria pairs and their burden of diarrhea"#, 
+                            # my_caption = "One bacteria + parasite pair included."
+                            )
   bv_plot  <- plot_pie_chart(d_f, original, plot_pair_type = "bacteria + viruses", 
-                             my_plot_title = "Bacteria + virus pairs and their burden of diarrhea", 
-                             my_caption = "One virus + virus pair included.")
+                             my_plot_title = "Bacteria + virus pairs and their burden of diarrhea"#, 
+                             # my_caption = "One virus + virus pair included."
+                             )
   # plot all. 
-  pdf('figures/copathogen_pie_charts.pdf', onefile = TRUE, height = 20, 
+  pdf('figures/copathogen_pie_charts_BB.pdf', onefile = TRUE, height = 10, 
       width = 20)
-  grid.arrange(
-    bb_plot,
-    bv_plot,
-    ncol = 1,
-    nrow = 2
-  )
+  print(bb_plot)
+  dev.off()
+  
+  pdf('figures/copathogen_pie_charts_BV.pdf', onefile = TRUE, height = 10, 
+      width = 20)
+  print(bv_plot)
   dev.off()
   
   # # # plot all. 
   # pdf('../figures/copathogen_pie_charts_ver2_photo.png', height = 20,
   #     width = 20)
-  png_vers <- arrangeGrob(
-    bb_plot,
-    bv_plot,
-    ncol = 1,
-    nrow = 2
-  )
-  
-  ggsave(file = 'figures/copathogen_pie_charts_photo.png', height = 20,
-         width = 20, plot = png_vers)
+  # png_vers <- arrangeGrob(
+  #   bb_plot,
+  #   bv_plot,
+  #   ncol = 1,
+  #   nrow = 2
+  # )
+  # 
+  # ggsave(file = 'figures/copathogen_pie_charts_photo.png', height = 20,
+  #        width = 20, plot = png_vers)
   
 }
 
@@ -514,7 +516,7 @@ pre_pie_data_prep <- function(d_f){
 }
 ##### Data Import 
 original_df <- import_complete_datasets(parent_dir = "data/") %>% combine_like_pathogens()
-all_simple_results <- get_all_simple_results(original_df, parent_dir = "results/pooled_samples/EXP_")
+all_simple_results <- get_all_simple_results(original_df, parent_dir = "results/pooled_samples")
 
 all_simple_results %>% pre_pie_data_prep() %>% 
   pie_plot_all_subsets(original_df)

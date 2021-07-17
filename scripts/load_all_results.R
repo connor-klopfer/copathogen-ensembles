@@ -44,7 +44,7 @@ combine_specs <- function(specs, original_df, ci = 0.95, parent_dir = "../result
     }
     
     
-    temp_file <- paste0(parent_dir, specs[[s]][["filename"]], ".csv")
+    temp_file <- file.path(parent_dir, paste0("EXP_", specs[[s]][["filename"]], ".csv"))
     temp_study <- specs[[s]][["study"]]
     temp_stool <- specs[[s]][["stool_type"]]
     temp_data_type <- specs[[s]][["data_type"]]
