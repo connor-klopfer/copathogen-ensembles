@@ -71,10 +71,10 @@ plot_pathogen_pair_distribution <- function(ensembles, output){
       #                                   gp = grid::gpar(fontsize=36, fontface="bold",lineheight=1)))
       # dev.off()
       # 
-      # pdf(paste0(pdf_path, s, "top_12", ".pdf"), width = 20, height = ceiling(length(plot_list)/4) * 3.8 * (3/11), onefile = F)
-      # grid.arrange(grobs = plot_list[1:12], ncol = 4,  
-      #              top = grid::textGrob("", gp = grid::gpar(fontsize=36, fontface="bold",lineheight=1)))
-      # dev.off()
+      pdf(paste0(pdf_path, s, "top_12", ".pdf"), width = 20, height = ceiling(length(plot_list)/4) * 3.8 * (3/11), onefile = F)
+      grid.arrange(grobs = plot_list[1:12], ncol = 4,
+                   top = grid::textGrob("", gp = grid::gpar(fontsize=36, fontface="bold",lineheight=1)))
+      dev.off()
       
       
       for(i in 1:length(plot_list)){

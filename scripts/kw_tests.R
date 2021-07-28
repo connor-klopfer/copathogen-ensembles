@@ -642,19 +642,23 @@ copath_relationship_summary <- function(pairs, original, by_stool = F, fill_miss
     ungroup() %>% distinct(path1, path2)
   
   pair_list <- list()
+  # For every pathogen pairs in the target pathogens 
   for(p in 1: nrow(sig_pairs)){
     # Make a new dataframe, for all the significant pairs, find them in the original dataset and give them a
-    # 1 or 0 if they are present or not. 
+    # 1 or 0 if they are present or not. Each dataframe will have 4 rows. 
     pair_list[[p]] <- original %>%
-      select(participant, study, stool_type, sig_pairs$path1[p],sig_pairs$path2[p]) %>%
-      rename_with(~c("participant","study", "stool_type",  "path1", "path2")) %>%
-      mutate(designation = determine_designation(path1, path2)) %>%
-      rename(path1_present = path1, path2_present = path2) %>%
-      mutate(path1 = sig_pairs$path1[p], path2 = sig_pairs$path2[p])
+      select(participant, study, stool_type, sig_pairs$path1[p],sig_pairs$path2[p]) %>% # Select the tagrgets from the original 
+      rename_with(~c("participant","study", "stool_type",  "path1", "path2")) %>%  #Rename 
+      mutate(designation = determine_designation(path1, path2)) %>% #Put them in the appropriate pathogen bin. 
+      rename(path1_present = path1, path2_present = path2) %>% # rename again
+      mutate(path1 = sig_pairs$path1[p], path2 = sig_pairs$path2[p]) # Set the solumn as the pathogen name. 
   }
   
-  # Final iteration indicates we want to pool across all stools and we won't fill missing 
+  # NOTE: Final iteration indicates we want to pool across all stools and we won't fill missing 
   # participants with a neither designation. 
+  
+  # Combine into one master dataframe, and condensence amoung partiticpants, meaning, applies neighter, non-concurrent, etc depending on the history 
+  # of the participabts with pathogens. 
   final <- do.call(rbind, pair_list) %>% 
     group_by(participant, study, path1, path2) %>% summarise(custom_tag = condense_participants(designation))
   
@@ -667,7 +671,7 @@ copath_relationship_summary <- function(pairs, original, by_stool = F, fill_miss
       mutate(combined = paste(path1, path2, sep = "+"))
 
 
-
+    # If ther's no pahogens ther then fill in as neither, meaning no pathogenw as neither
     if(fill_missing){
       final <- final %>% ungroup() %>% group_by(study) %>%
         tidyr::complete(participant, stool_type, combined, fill = list(custom_tag = "neither"))
@@ -688,7 +692,17 @@ copath_relationship_summary <- function(pairs, original, by_stool = F, fill_miss
 }
 
 copath_relationship_env_vars <- function(summary_df, env_vars){
+  #' @title 
+  #' 
+  #' @description 
+  #' 
+  #' @param summary_df : Dataframe containing the bins (either, neither, both, non-concurrent), 
+  #' and the counts for each
+  #' 
+  #' @param env_vars :env_variables for the studies. Most importantly, the number 
+  #' of diarrheal days. 
   
+  # Join  the ENV data to the summary data. 
   final <- summary_df %>% 
     left_join(
       env_vars %>%
@@ -960,6 +974,7 @@ observations <- data.table::fread("data/ISASimple_Gates_MAL-ED_phase3_RSRC_obser
 participant <- data.table::fread("data/ISASimple_Gates_MAL-ED_phase3_RSRC_participant.txt")
 households <- data.table::fread("data/ISASimple_Gates_MAL-ED_phase3_RSRC_households.txt")
 
+##### Count pathogen pair occurence #####
 
 # For each pathogen SID, what is the count of occurences of pathogen pairs, the tally of pathogen pairs that were significant, shared by both sudies versus not sharing both pathogens 
 sid_counts <- count_shared_sids(all_simple_results, original_df, method = "sid")
@@ -987,11 +1002,13 @@ sid_fraction_wide_env_vars <- add_maled_env(
   participant, 
   households)
 
+##### Missing data and env variables #####
 
 provide_env_variables <- read.csv(file = "data/copath_fractions_maled_provide_env_Oct20.csv")
 provide_missing_values <- read.csv("data/provide_missed_specs.csv", stringsAsFactors = F)
 
 copath_fractions_all <- readr::read_csv("data/copath_fractions_maled_provide_env_Oct20.csv") %>% tidyr::pivot_longer(contains("__")) 
+
 
 pair_bins <- copath_relationship_summary(
   all_simple_results, original_df, by_stool = F) %>% 
@@ -1007,18 +1024,19 @@ pair_bins_bystool <- copath_relationship_summary(all_simple_results,
 missing_diar_ids_maled <- expanded_matching(observations, households, original_df) %>% distinct(participant_ids) 
 
 
-# TODO: THis needs to change here, there's too many nested functions, we should 
-# have it eliminate any participants that are missing any of the stools. 
+# Individual participant data, for breaking up the analysis by stool. Missing participants 
+# are removed from the diarrhea sample if they were missing diarrheal stools, and vice versa 
+# for asymptoamtic stools 
 pair_bins_bystool_dropped <- copath_relationship_summary(
   all_simple_results, original_df,
   by_stool = T, fill_missing = T) %>% 
   tidyr::separate(combined, c("path1", "path2"), sep = "\\+") %>% 
-  copath_relationship_env_vars(., provide_env_variables) %>% 
+  copath_relationship_env_vars(., provide_env_variables) %>% # Add in the ENV data 
   left_join(
     copath_fractions_all %>%
       rename(ndays_diarrhea = n_days_diarrhea_episode, participant = Participant_Id) %>%
       select(participant, ndays_diarrhea) %>% distinct(), by = "participant") %>% 
-  anti_join(
+  anti_join( # Append in the missing data 
     rbind(
       provide_missing_values %>% select(-N_asympto) %>% tidyr::pivot_longer(c("Missing_asympto", "Missing_diarrheal"),
                                                                             names_to = "stool_type",
@@ -1030,6 +1048,30 @@ pair_bins_bystool_dropped <- copath_relationship_summary(
     by = c("participant",
            "stool_type"
            )) 
+
+# This drops all the participants that are missing either the asymptoamtic or the diarrheal stools 
+# Added in to see if there is a change if we only include that subset. 
+pair_bins_bystool_dropped_eitherstool <- copath_relationship_summary(
+  all_simple_results, original_df,
+  by_stool = T, fill_missing = T) %>% 
+  tidyr::separate(combined, c("path1", "path2"), sep = "\\+") %>% 
+  copath_relationship_env_vars(., provide_env_variables) %>% # Add in the ENV data 
+  left_join(
+    copath_fractions_all %>%
+      rename(ndays_diarrhea = n_days_diarrhea_episode, participant = Participant_Id) %>%
+      select(participant, ndays_diarrhea) %>% distinct(), by = "participant") %>% 
+  anti_join( # Append in the missing data 
+    rbind(
+      provide_missing_values %>% select(-N_asympto) %>% tidyr::pivot_longer(c("Missing_asympto", "Missing_diarrheal"),
+                                                                            names_to = "stool_type",
+                                                                            values_to = "n_missing") %>% 
+        mutate(stool_type = stringr::str_replace(stool_type, "Missing_", "")) %>% 
+        mutate(stool_type = ifelse(stool_type == "diarrheal", "Diarrhea", "Asymptomatic")) %>% filter(n_missing > 0) %>% 
+        mutate(participant = as.character(Participant_id)) %>% select(participant, stool_type),
+      missing_diar_ids_maled %>% rename(participant = participant_ids) %>% select(participant) %>% mutate(stool_type = "Diarrhea") %>% 
+        filter()),
+    by = c("participant"
+    )) 
 
 pair_bins_bystool_dropped_nonfilled <- copath_relationship_summary(
   all_simple_results, original_df,
@@ -1048,6 +1090,8 @@ pair_bins_wide_bystool <- pair_bins_bystool %>%
                      names_from = "measurement", values_from = "value")
 
 
+# All the individual participant data for pooled stools, participants are dropped 
+# if they are missing asymptomatic or diarrheal stools. 
 pooled_dropped_participants <- pair_bins %>% 
   left_join(
     copath_fractions_all %>%
@@ -1101,10 +1145,18 @@ kw_bystool_dropped <- test_kw_tests(
   # select(participant, ndays_diarrhea) %>% distinct(), by = "participant"), 
   kw_comparisons, by_stool = T)
 
+kw_bystool_dropped_eitherstool <- test_kw_tests(
+  pair_bins_bystool_dropped_eitherstool, 
+  kw_comparisons, by_stool = T
+)
+
+
 kw_pooled_dropped <- pooled_dropped_participants %>% test_kw_tests(kw_comparisons, by_stool = F)
 
 
 my_kw_plots <- function(d_f){
+  max_days <- max(d_f$ave, na.rm = T)
+  print(max(d_f$ave))
   final <- d_f %>%
     mutate(tag = factor(tag, levels = c(
       "both", 
@@ -1112,7 +1164,12 @@ my_kw_plots <- function(d_f){
       "either", 
       "neither"))) %>% 
     rename(measurement_ave = ave) %>%
-    mutate(sig_label = case_when(pr_f < 0.05 ~ "*", TRUE ~""), 
+    mutate(sig_label = case_when(
+       0.01 < pr_f & pr_f < 0.05 ~ "*",
+      0.001 < pr_f & pr_f < 0.01 ~ "**",
+      .0001 < pr_f & pr_f < 0.001 ~ "***",
+      pr_f < 0.0001 ~ "****",
+      TRUE ~""), 
            study_v = case_when(study_v == "maled" ~ "MAL-ED", study_v == "provide" ~ "PROVIDE")) %>% 
     # mutate(combined = paste0(combined, sig_label)) %>%
     # arrange(ave_rank) %>%
@@ -1133,7 +1190,7 @@ my_kw_plots <- function(d_f){
         # width = 0.8, 
         reverse = T))+
     # geom_label(aes(label = round(measurement_ave, 2)), position = position_dodge2(width = 0.8))+
-    geom_text(aes(label = sig_label, y = max(measurement_ave, na.rm = T) + 1, group = combined), 
+    geom_text(aes(label = sig_label, y = max(measurement_ave, na.rm = T) + 5, group = combined), 
               # position = position_dodge(width = 0.8), 
               color = "black")+
     coord_flip()+
@@ -1169,11 +1226,13 @@ my_kw_plots <- function(d_f){
     #   "not_concurrent", 
     #   "either", 
     #   "neither"))+
+    scale_y_continuous(limits = c(0, max_days + 10))+
+    
     theme(strip.background.y = element_blank(), 
           strip.text.y = element_blank(), 
           panel.background = element_rect(fill = 'gray99'), 
           panel.border = element_rect(fill = NA, color = "black"), 
-          panel.grid.major.x = element_line(color = "black"), 
+          panel.grid.major.x = element_line(color = "gray75"), 
           axis.text.y = element_text(size = rel(1.2)))+
     # facet_grid(facet_idx~.,
     #            scales = "free_y"
@@ -1291,7 +1350,7 @@ kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
   temp_plot<- temp_source_data %>%
     filter(interaction_type == "bacteria + viruses" | combined == "Norovirus GII + Astrovirus") %>%
     my_kw_plots() +
-    labs(title = "Bacteria + Virus Pairs")
+    labs(title = paste(plot_title, "Bacteria + Bacteria Pairs"))
   ggsave(path = "figures", filename = paste0("BV_", plot_filename, ".png"), device = "png")
   
   
@@ -1299,9 +1358,17 @@ kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
 
 kw_plots(kw_pooled_dropped, all_simple_results, "Pooled", "pooled_samples")
 
+kw_pooled_dropped %>% View()
+
 kw_plots(kw_bystool_dropped %>% filter(stool == "Diarrhea"), all_simple_results, "By Stool", "bystool_diarrhea")
 
 kw_plots(kw_bystool_dropped %>% filter(stool == "Asymptomatic"), all_simple_results, "By Stool", "bystool_asymptomatic")
+
+kw_plots(kw_bystool_dropped_eitherstool %>% filter(stool == "Diarrhea"), all_simple_results, "By Stool Subset", "bystool_diarrhea2")
+
+kw_plots(kw_bystool_dropped_eitherstool %>% filter(stool == "Asymptomatic"), all_simple_results, "By Stool Subset", "bystool_asymptomatic2")
+
+
 
            
           # Change to a function 
