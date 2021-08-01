@@ -62,7 +62,7 @@ prevalence_plot <- complete_data %>%
   mutate(study = ifelse(study == "maled", "MAL-ED", "PROVIDE")) %>%
   # filter_out_symmetric() %>% 
   mutate(path1 = pathogen, path2 = "") %>% 
-  readable_path_names() %>% mutate(pathogen = path1) %>% 
+  readable_path_names(formatted = T) %>% mutate(pathogen = path1) %>% 
   ggplot(aes(x = pathogen, y = p_frac, fill = stool_type))+
   geom_bar(stat = "identity", position = "dodge")+
   facet_grid(.~study)+
@@ -73,7 +73,8 @@ prevalence_plot <- complete_data %>%
         panel.border = element_rect(fill = NA, color = "gray"),
         panel.grid = element_line(color = "lightgray"), 
         strip.background = element_rect(fill = "white"), 
-        axis.text = element_text(size = rel(1.3)),
+        axis.text.x = element_text(size = rel(1.3)),
+        axis.text.y = element_markdown(size = rel(1.3)),
         strip.text = element_text(size = rel(1.1)))
 png(file.path("figures", "path_prevalence.png"))
 print(prevalence_plot)

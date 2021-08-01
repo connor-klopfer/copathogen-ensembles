@@ -3,6 +3,7 @@
 
 library(dplyr)
 library(ggplot2)
+library(ggtext)
 library(gridExtra)
 library(copathogenTools)
 source(file.path("scripts", "load_all_results.R"))
@@ -18,7 +19,7 @@ plot_pathogen_pair_distribution <- function(ensembles, output){
   for(s in c("Diarrhea", "Asymptomatic")){
     
     ordered_plot <- ensembles %>% ungroup() %>%
-      readable_path_names() %>%
+      readable_path_names(formatted = T) %>%
       # filter_out_nonsymmetric() %>%
       mutate(pathogen_pair = paste(path1, path2, sep = " + ")) %>%
       filter(stool_type == s, actual > CO_MINIMUM) %>%
@@ -38,7 +39,7 @@ plot_pathogen_pair_distribution <- function(ensembles, output){
     
     data_subset <- ensembles %>%
       filter(stool_type == s) %>% 
-      readable_path_names() %>% 
+      readable_path_names(formatted = T) %>% 
       mutate(pathogen_pair = paste(path1, path2, sep = " + ")) %>% 
       group_by(pathogen_pair, stool_type) %>% 
       mutate(combined_label = factor(pathogen_pair, levels = unique(ordered_plot$pathogen_pair)))
@@ -227,6 +228,7 @@ plot_standardised_histogram <- function(pathogens, data_subset){
     theme(
       panel.background = element_blank(), 
       strip.background = element_blank(),
+      plot.title = element_markdown(),
       # strip.text = element_blank(),
       panel.border = element_rect(fill = NA, color = "lightgray")
     )+ 

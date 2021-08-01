@@ -13,6 +13,7 @@
 
 library(dplyr)
 library(ggplot2)
+library(ggtext)
 library(copathogenTools)
 
 source("scripts/load_all_results.R", echo = F)
@@ -1233,7 +1234,7 @@ my_kw_plots <- function(d_f){
           panel.background = element_rect(fill = 'gray99'), 
           panel.border = element_rect(fill = NA, color = "black"), 
           panel.grid.major.x = element_line(color = "gray75"), 
-          axis.text.y = element_text(size = rel(1.2)))+
+          axis.text.y = element_markdown(size = rel(1.2)))+
     # facet_grid(facet_idx~.,
     #            scales = "free_y"
     #            )+
@@ -1337,7 +1338,7 @@ kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
     ) %>% 
     rowwise() %>% 
     mutate(interaction_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
-    readable_path_names() %>% 
+    readable_path_names(formatted = T) %>% 
     mutate(combined = paste(path1, path2, sep = " + ")) %>% distinct()
   
 
@@ -1358,7 +1359,7 @@ kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
 
 kw_plots(kw_pooled_dropped, all_simple_results, "Pooled", "pooled_samples")
 
-kw_pooled_dropped %>% View()
+# kw_pooled_dropped %>% View()
 
 kw_plots(kw_bystool_dropped %>% filter(stool == "Diarrhea"), all_simple_results, "By Stool", "bystool_diarrhea")
 

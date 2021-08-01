@@ -19,36 +19,23 @@ pie_plot_all_subsets <- function(d_f, original){
   
   bb_plot <- plot_pie_chart(d_f, original, 
                             plot_pair_type = "bacteria + bacteria", 
-                            my_plot_title = "Bacteria + bacteria pairs and their burden of diarrhea"#, 
+                            # my_plot_title = "Bacteria + bacteria pairs and their burden of diarrhea"#, 
                             # my_caption = "One bacteria + parasite pair included."
                             )
   bv_plot  <- plot_pie_chart(d_f, original, plot_pair_type = "bacteria + viruses", 
-                             my_plot_title = "Bacteria + virus pairs and their burden of diarrhea"#, 
+                             # my_plot_title = "Bacteria + virus pairs and their burden of diarrhea"#, 
                              # my_caption = "One virus + virus pair included."
                              )
   # plot all. 
   pdf('figures/copathogen_pie_charts_BB.pdf', onefile = TRUE, height = 10, 
-      width = 20)
+      width = 15)
   print(bb_plot)
   dev.off()
   
   pdf('figures/copathogen_pie_charts_BV.pdf', onefile = TRUE, height = 10, 
-      width = 20)
+      width = 15)
   print(bv_plot)
   dev.off()
-  
-  # # # plot all. 
-  # pdf('../figures/copathogen_pie_charts_ver2_photo.png', height = 20,
-  #     width = 20)
-  # png_vers <- arrangeGrob(
-  #   bb_plot,
-  #   bv_plot,
-  #   ncol = 1,
-  #   nrow = 2
-  # )
-  # 
-  # ggsave(file = 'figures/copathogen_pie_charts_photo.png', height = 20,
-  #        width = 20, plot = png_vers)
   
 }
 
@@ -58,83 +45,31 @@ get_target_pairs <- function(){
   #' Ross ID'd 
   #' 
   pathogens_and_colors <- c(
-    "#ddb310" = "Campylobacter spp.+Rotavirus",
+    "#ddb310" = "*Campylobacter* spp.+Rotavirus",
     "#5eccab" = "EAEC+Norovirus GII",
     "#e41a1c" = "EAEC+Adenovirus 40/41",
-    "#1f78b4" = "B. fragilis+Norovirus GII",
+    "#1f78b4" = "*B. fragilis*+Norovirus GII",
     "#00beff" = "ETEC+Rotavirus",
-    # "#7FC97F" = "B. fragilis+Norovirus GII",
-    "#33a02c" = "Shigella spp.+Rotavirus",
+    "#33a02c" = "*Shigella* spp.+Rotavirus",
     "#999999" = "EPEC+Rotavirus",
     "#b15928" = "EPEC+Astrovirus",
     "#984ea3" = "ETEC+Astrovirus",
-    # "#7FC97F" = "EPEC+Rotavirus",
     "#fb49b0" = "Norovirus GII+Astrovirus",
     "#C8B1C7" = "ETEC+EPEC",
-    "#f781bf" = "ETEC+Campylobacter spp.",
-    "navy" = "EPEC+Campylobacter spp.",
-    "#537eff" = "EAEC+Campylobacter spp.",
+    "#f781bf" = "ETEC+*Campylobacter* spp.",
+    "navy" = "EPEC+*Campylobacter* spp.",
+    "#537eff" = "EAEC+*Campylobacter* spp.",
     "#ff7f00" = "ETEC+EAEC",
-    "orange" = "EPEC+B. fragilis",
-    "#4daf4a" = "ETEC+B. fragilis",
-    "gray32" = "EPEC+Cryptosporidium spp.",
-    "#FDD58C" = "Shigella spp.+Campylobacter spp.",
-    "#9BB5A4" = "Shigella spp.+ETEC",
-    "#9BB5A4" = "Shigella spp.+ETEC",
-    "#9BB5A4" = "Shigella spp.ETEC",
+    "orange" = "EPEC+*B. fragilis*",
+    "#4daf4a" = "ETEC+*B. fragilis*",
+    "gray32" = "EPEC+*Cryptosporidium* spp.",
+    "#FDD58C" = "*Shigella* spp.+*Campylobacter* spp.",
+    "#9BB5A4" = "*Shigella* spp.+ETEC",
+    "#9BB5A4" = "*Shigella* spp.+ETEC",
+    "#9BB5A4" = "*Shigella* spp.ETEC",
     "white" = " "
     
-    
-    
-    
-    
-    
-    
-    
-    
-    # "#B2258F" = "Cryptosporidium spp.+tEPEC",
-    # # "#C74C28" = "aEPEC+ETEC",
-    # # "#7FC97F" = "Adenovirus 40/41+aEPEC",
-    # "#7FC97F" = "Norovirus GII+Astrovirus",
-    # "#1f78b4" = "Astrovirus+EPEC",
-    # "#a65628" = "Astrovirus+ETEC",
-    # "#33a02c" = "Adenovirus 40/41+EAEC",
-    # # "#E31864" = "Sapovirus+aEPEC",
-    # "#E31864" = "Sapovirus+Campylobacter spp.",
-    # "#b15928" = "Rotavirus+Campylobacter spp.",
-    # "#984ea3" = "Rotavirus+ETEC",
-    # "#e41a1c" = "Rotavirus+EPEC",
-    # "#EDAB89" = "Rotavirus+Shigella spp.",
-    # "#fdbf6f" = "Rotavirus+Norovirus GII",
-    # "#C74C28" = "EPEC+Shigella spp.",
-    # "#4daf4a" = "Norovirus GI+Campylobacter spp.",
-    # "lightblue" = "Aeromonas+V. cholerae",
-    # 'pink' = "Norovirus GII+C. difficile",
-    # 'yellow' = "Norovirus GII+Astrovirus",
-    # '#6a3d9a' = "Rotavirus+C. difficile",
-    # '#ff7f00' = 'Astrovirus+EPEC',
-    # 'green' = "Astrovirus+Cryptosporidium spp.",
-    # 'yellow' = "Rotavirus+Cryptosporidium spp.",
-    # "NULL" = "white"
-    # "#666666" = "Fraction across both studies",
   )
-  # pathogens_subset <- vector(mode = "character", length = length(pathogens))
-  # colors_subset <- vector(mode = "character", length = length(pathogens))
-  # counter <- 1
-  # for(p in 1:length(pathogens)){
-  #   for(c in 1:length(pathogens_and_colors)){
-  #     if(stringr::str_detect(pathogens[p], stringr::fixed(pathogens_and_colors[c]))){
-  #       # print(pathogens[p])
-  #       pathogens_subset[counter] <- pathogens[p]
-  #       colors_subset[counter] <- names(pathogens_and_colors)[c]
-  #       counter <- counter + 1
-  #     }#else{
-  #     #   print(paste(p, pathogens_and_colors[c]))
-  #     # }
-  #   }
-  # }
-  # names(pathogens_subset) <- colors_subset
-  # return(pathogens_subset)
   return(pathogens_and_colors)
 }
 
@@ -145,67 +80,24 @@ label_pathogen_pair <- function(path1, path2){
   # print(path2)
   # print("Next")
   pathogen_labels[["viruses"]] <- c(
-    # "aeromonas"                     = "Aeromonas",
-    # "ancyclostoma"                  = "Ancyclostoma",
-    # "trichuris trichiura"           = "Trichuris",
-    # "e.bieneusi"                    = "E. bieneusi",
-    # "e.intestinalis"                = "E. intestinalis",
-    # "cryptosporidium"               = "Cryptosporidium spp.",
-    # "salmonella"                    = "Salmonella",
-    # "h.pylori"                      = "H. pylori",
-    # "c.jejuni/coli"                 = "C. jejuni/coli",
-    # "campy pan"                     = "Campylobacter spp.",
-    # "b.fragilis"                    = "B. fragilis",
-    # "c.difficile"                   = "C. difficile",
     "adenovirus f"                  = "Adenovirus 40/41",
     "norovirus gi"                  = "Norovirus GI",
     "norovirus gii"                 = "Norovirus GII",
     "astrovirus"                    = "Astrovirus",
-    # "necator"                       = "Necator",
-    # "strongyloides"                 = "Strongyloides",
-    # "cyclospora"                    = "Cyclospora",
-    # "isospora"                      = "Isospora",
-    # "e.histolytica"                 = "E. histolytica",
-    # "m.tb"                          = "M. tuberculosis",
-    # "v.cholerae"                    = "V. cholerae",
-    # "shigella & eiec"               = "Shigella spp.",
     "sapovirus"                     = "Sapovirus",
     "rotavirus"                     = "Rotavirus"#,
-    # "eaec"                          = "EAEC",
-    # "atypical epec"                 = "aEPEC",
-    # "typical epec"                  = "tEPEC",
-    # "stec"                          = "STEC",
-    # "lt_etec"                       = "ETEC lt",
-    # "st_etec"                       = "ETEC st",
-    # "etec"                          = "ETEC"
   )
   pathogen_labels[["bacteria"]] <- c(
     "aeromonas"                     = "Aeromonas",
-    # "ancyclostoma"                  = "Ancyclostoma",
-    # "trichuris trichiura"           = "Trichuris",
-    # "e.bieneusi"                    = "E. bieneusi",
-    # "e.intestinalis"                = "E. intestinalis",
-    # "cryptosporidium"               = "Cryptosporidium spp.",
     "salmonella"                    = "Salmonella",
     "h.pylori"                      = "H. pylori",
     "c.jejuni/coli"                 = "C. jejuni/coli",
     "campy pan"                     = "Campylobacter spp.",
     "b.fragilis"                    = "B. fragilis",
     "c.difficile"                   = "C. difficile",
-    # "adenovirus f"                  = "Adenovirus 40/41",
-    # "norovirus gi"                  = "Norovirus GI",
-    # "norovirus gii"                 = "Norovirus GII",
-    # "astrovirus"                    = "Astrovirus",
-    # "necator"                       = "Necator",
-    # "strongyloides"                 = "Strongyloides",
-    # "cyclospora"                    = "Cyclospora",
-    # "isospora"                      = "Isospora",
-    # "e.histolytica"                 = "E. histolytica",
     "m.tb"                          = "M. tuberculosis",
     "v.cholerae"                    = "V. cholerae",
     "shigella & eiec"               = "Shigella spp.",
-    # "sapovirus"                     = "Sapovirus",
-    # "rotavirus"                     = "Rotavirus"#,
     "eaec"                          = "EAEC",
     "atypical epec"                 = "aEPEC",
     "typical epec"                  = "tEPEC",
@@ -217,40 +109,17 @@ label_pathogen_pair <- function(path1, path2){
   )
   
   pathogen_labels[["other"]] <- c(
-    # "aeromonas"                     = "Aeromonas",
     "ancyclostoma"                  = "Ancyclostoma",
     "ascaris lumbricoides"          = "A. lumbricoides", 
     "trichuris trichiura"           = "Trichuris",
     "e.bieneusi"                    = "E. bieneusi",
     "e.intestinalis"                = "E. intestinalis",
     "cryptosporidium"               = "Cryptosporidium spp.",
-    # "salmonella"                    = "Salmonella",
-    # "h.pylori"                      = "H. pylori",
-    # "c.jejuni/coli"                 = "C. jejuni/coli",
-    # "campy pan"                     = "Campylobacter spp.",
-    # "b.fragilis"                    = "B. fragilis",
-    # "c.difficile"                   = "C. difficile",
-    # "adenovirus f"                  = "Adenovirus 40/41",
-    # "norovirus gi"                  = "Norovirus GI",
-    # "norovirus gii"                 = "Norovirus GII",
-    # "astrovirus"                    = "Astrovirus",
     "necator"                       = "Necator",
     "strongyloides"                 = "Strongyloides",
     "cyclospora"                    = "Cyclospora",
     "isospora"                      = "Isospora",
     "e.histolytica"                 = "E. histolytica"#,
-    # "m.tb"                          = "M. tuberculosis",
-    # "v.cholerae"                    = "V. cholerae",
-    # "shigella & eiec"               = "Shigella spp.",
-    # "sapovirus"                     = "Sapovirus",
-    # "rotavirus"                     = "Rotavirus"#,
-    # "eaec"                          = "EAEC",
-    # "atypical epec"                 = "aEPEC",
-    # "typical epec"                  = "tEPEC",
-    # "stec"                          = "STEC",
-    # "lt_etec"                       = "ETEC lt",
-    # "st_etec"                       = "ETEC st",
-    # "etec"                          = "ETEC"
   )
   
   path1_temp <- NA
@@ -276,40 +145,26 @@ plot_pie_chart <- function(d_f, original,
 
   target_pathogens <- get_target_pairs()
 
-  d_f %>% 
-    rowwise() %>% 
-    mutate(pair_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
-    readable_path_names() %>% 
-    rowwise() %>%
-    mutate(combined = paste(path1, path2, sep = "+")) %>% 
-    filter(
-      pair_type == plot_pair_type |
-             (plot_pair_type == "bacteria + bacteria" & combined == "EPEC+Cryptosporidium spp.") |
-        (plot_pair_type == "bacteria + viruses" & combined == "Norovirus GII+Astrovirus")
-           ) %>%
-    # filter(combined %in% target_pathogens) %>% 
-    View()
   path_combos <- d_f %>% 
     rowwise() %>% 
     mutate(pair_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
-    readable_path_names() %>% 
+    readable_path_names(formatted = T) %>% 
     rowwise() %>%
     mutate(combined = paste(path1, path2, sep = "+")) %>% 
     filter(pair_type == plot_pair_type | 
-             (plot_pair_type == "bacteria + bacteria" & combined == "EPEC+Cryptosporidium spp.") |
+             (plot_pair_type == "bacteria + bacteria" & combined == "EPEC+*Cryptosporidium* spp.") |
              (plot_pair_type == "bacteria + viruses" & combined == "Norovirus GII+Astrovirus")) %>%
     filter(combined %in% target_pathogens) %>% 
     distinct(combined) %>% unlist()
   
+  # print(path_combos)
   
-  
-  print(path_combos)
   # Build the dataframe that serves as the basis for the whole plot. 
   count_data <- d_f %>% filter(
     actual > MINIMUM_CO
   ) %>% 
     # Watch here, this might remove pairs that shouldn't be removed. 
-    readable_path_names() %>% 
+    readable_path_names(formatted = T) %>% 
     rowwise() %>%
     mutate(combined = paste(path1, path2, sep = "+"))%>% 
     filter(combined %in% path_combos) %>% 
@@ -372,7 +227,7 @@ plot_pie_chart <- function(d_f, original,
     pathogen_colors[p] <- as.character(count_data$combined_label[count_data$combined == target_pathogens[pathogen_idx]])
     names(pathogen_colors)[p] <- names(target_pathogens)[pathogen_idx]
   }
-  
+
   final_pie <- count_data %>% ungroup() %>% 
     ggplot(aes(
       # x = factor(reorder(combined_label,  ordering), ordered = T),
@@ -417,8 +272,9 @@ plot_pie_chart <- function(d_f, original,
           axis.ticks.y = element_blank(),
           axis.text.x = element_blank(),
           panel.background = element_blank(),
-          legend.text = element_text(size = rel(1.1)),
-          legend.title = element_text(size = rel(1.2)),
+          legend.text = element_markdown(size = rel(1.5)),
+          legend.title = element_text(size = rel(1.7)),
+          legend.key.height = unit(1, 'cm'),
           plot.title = element_text(size = rel(2)),
           panel.grid.minor.y = element_blank())
   return(final_pie)
@@ -430,38 +286,12 @@ sort_pathogen_pairs <- function(path1, path2){
   # print(path2)
   viruses <- c(
     "aeromonas"                     = "Aeromonas",
-    # "ancyclostoma"                  = "Ancyclostoma",
-    # "trichuris trichiura"           = "Trichuris",
-    # "e.bieneusi"                    = "E. bieneusi",
-    # "e.intestinalis"                = "E. intestinalis",
-    # "cryptosporidium"               = "Cryptosporidium spp.",
-    # "salmonella"                    = "Salmonella",
-    # "h.pylori"                      = "H. pylori",
-    # "c.jejuni/coli"                 = "C. jejuni/coli",
-    # "campy pan"                     = "Campylobacter spp.",
-    # "b.fragilis"                    = "B. fragilis",
-    # "c.difficile"                   = "C. difficile",
     "adenovirus f"                  = "Adenovirus 40/41",
     "norovirus gi"                  = "Norovirus GI",
     "norovirus gii"                 = "Norovirus GII",
     "astrovirus"                    = "Astrovirus",
-    # "necator"                       = "Necator",
-    # "strongyloides"                 = "Strongyloides",
-    # "cyclospora"                    = "Cyclospora",
-    # "isospora"                      = "Isospora",
-    # "e.histolytica"                 = "E. histolytica",
-    # "m.tb"                          = "M. tuberculosis",
-    # "v.cholerae"                    = "V. cholerae",
-    # "shigella & eiec"               = "Shigella spp.",
     "sapovirus"                     = "Sapovirus",
     "rotavirus"                     = "Rotavirus"#,
-    # "eaec"                          = "EAEC",
-    # "atypical epec"                 = "aEPEC",
-    # "typical epec"                  = "tEPEC",
-    # "stec"                          = "STEC",
-    # "lt_etec"                       = "ETEC lt",
-    # "st_etec"                       = "ETEC st",
-    # "etec"                          = "ETEC"
   )
   
   if(path1 %in% viruses){
@@ -492,11 +322,7 @@ pre_pie_data_prep <- function(d_f){
     mutate(top10_distance = distance_rank < max(distance_rank) * 0.1) %>% 
     ungroup() %>% group_by(path1, path2, stool_type) %>% 
     mutate(top10_both = sum(top10_distance) > 1) %>%  ungroup() %>% 
-    # readable_path_names() %>% 
-    # filter_out_nonsymmetric() %>% 
     mutate(pathogen_pair = paste(path1, path2, sep = " + ")) %>% 
-    # filter(stool_type == s, actual > 10) %>% 
-    # select(pathogen_pair, study, stool_type, actual, distance_rank_n) %>% 
     distinct() %>%
     # mutate(direction = ifelse(actual - average > 0, "Higher", "Lower")) %>% # Keep pathogen pairs that both areg higher than the average 
     group_by(pathogen_pair, stool_type) %>%
@@ -506,11 +332,6 @@ pre_pie_data_prep <- function(d_f){
     ungroup() %>% 
     filter(
       n_pairs > 1) %>% 
-    # group_by(stool_type) %>% 
-    # slice_min(ave_rank, 
-    #           n = floor(choose(length(union(D_f$path1, d_f$path2)), 2)* 0.1)
-    #           # n = 20
-    # ) %>% # 52 is a hard coding 10%, 
     arrange(ave_rank)
   return(final)
 }
@@ -518,6 +339,6 @@ pre_pie_data_prep <- function(d_f){
 original_df <- import_complete_datasets(parent_dir = "data/") %>% combine_like_pathogens()
 all_simple_results <- get_all_simple_results(original_df, parent_dir = "results/pooled_samples")
 
-all_simple_results %>% pre_pie_data_prep() %>% 
+all_simple_results %>% pre_pie_data_prep() %>%
   pie_plot_all_subsets(original_df)
 ##### 
