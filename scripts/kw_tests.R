@@ -1351,7 +1351,7 @@ kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
   temp_plot<- temp_source_data %>%
     filter(interaction_type == "bacteria + viruses" | combined == "Norovirus GII + Astrovirus") %>%
     my_kw_plots() +
-    labs(title = paste(plot_title, "Bacteria + Bacteria Pairs"))
+    labs(title = paste(plot_title, "Bacteria + Virus Pairs"))
   ggsave(path = "figures", filename = paste0("BV_", plot_filename, ".png"), device = "png")
   
   
