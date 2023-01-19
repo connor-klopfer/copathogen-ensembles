@@ -72,17 +72,17 @@ plot_pathogen_pair_distribution <- function(ensembles, output){
       #                                   gp = grid::gpar(fontsize=36, fontface="bold",lineheight=1)))
       # dev.off()
       # 
-      pdf(paste0(pdf_path, s, "top_12", ".pdf"), width = 20, height = ceiling(length(plot_list)/4) * 3.8 * (3/11), onefile = F)
+      pdf(paste0(pdf_path, s, "top_12_09Jun22", ".pdf"), width = 20, height = ceiling(length(plot_list)/4) * 3.8 * (3/11), onefile = F)
       grid.arrange(grobs = plot_list[1:12], ncol = 4,
                    top = grid::textGrob("", gp = grid::gpar(fontsize=36, fontface="bold",lineheight=1)))
       dev.off()
       
       
-      for(i in 1:length(plot_list)){
-        pdf(file.path("figures", "all_ensembles", tolower(s), paste0(paste(s, i, sep = "_"), ".pdf")), width = 6, height = 4 , onefile = F)
-        print(plot_list[[i]])
-        dev.off()
-      }
+      # for(i in 1:length(plot_list)){
+      #   pdf(file.path("figures", "all_ensembles", tolower(s), paste0(paste(s, i, sep = "_"), ".pdf")), width = 6, height = 4 , onefile = F)
+      #   print(plot_list[[i]])
+      #   dev.off()
+      # }
     }
   }
   
@@ -212,7 +212,8 @@ plot_standardised_histogram <- function(pathogens, data_subset){
             label = paste(c("SD: ", round(actual_std, 3), "\nObs. CO: ", actual), collapse = "")),
         fill = "white",
         color = "black",
-        size = rel(5),
+        label.padding = unit(0.35, 'lines'),
+        size = rel(6.5),
         hjust = "inward",
         show.legend = FALSE
       )
@@ -227,8 +228,10 @@ plot_standardised_histogram <- function(pathogens, data_subset){
                                             ))+
     theme(
       panel.background = element_blank(), 
+      strip.text = element_text(size = rel(1.2)),
+      axis.text = element_text(size = rel(1.2)),
       strip.background = element_blank(),
-      plot.title = element_markdown(),
+      plot.title = element_markdown(size = rel(1.9)),
       # strip.text = element_blank(),
       panel.border = element_rect(fill = NA, color = "lightgray")
     )+ 

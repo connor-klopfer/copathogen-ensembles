@@ -1194,6 +1194,9 @@ my_kw_plots <- function(d_f){
     geom_text(aes(label = sig_label, y = max(measurement_ave, na.rm = T) + 5, group = combined), 
               # position = position_dodge(width = 0.8), 
               color = "black")+
+    geom_hline(
+      aes(yintercept = meanDaysDiarrhea), color = "black", linetype = "dashed"
+    )+
     coord_flip()+
     scale_fill_manual(
       labels = c(
@@ -1248,71 +1251,8 @@ interaction_types <- all_simple_results %>% rowwise() %>%
   mutate(interaction_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
   select(interaction_type) %>% unique() %>% unlist()
 
-
-# for(i in interaction_types){
-  # kw_pooled_dropped
-    temp_source_data <- kw_pooled_dropped %>%
-    left_join(
-      all_simple_results %>% 
-        # rank_pathogen_pairs() %>% 
-        select_target_pathogens() %>%
-      # get_top_ranked_pathogens(all_simple_results, shared = T) %>% 
-        select(path1, path2, 
-               # stool_type,
-               # direction, 
-               study, 
-               # ave_rank
-               ) %>% distinct() %>%  
-        # arrange(ave_rank) 
-      mutate(facet_idx = seq(nrow(.))), 
-      by = c("path1", "path2", 
-             # "stool" = "stool_type",
-             "study_v" = "study")
-    ) %>% 
-    rowwise() %>% 
-    mutate(interaction_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
-      # group_by(path1, path2, study_v, interaction_type#, 
-      #          # direction
-      #          ) %>% mutate(facet_idx = mean(facet_idx, na.rm = T)) %>% ungroup() %>% 
-      readable_path_names() %>% 
-      mutate(combined = paste(path1, path2, sep = " + ")) %>% distinct()
-    
-    
-    # for(s in unique(temp_source_data$study_v)){
-      # for(d in unique((temp_source_data$direction))){
-      #   valid_plot <- temp_source_data %>%
-      #           filter(study_v == s, interaction_type == i, direction == d) %>% nrow() > 0
-        # if(valid_plot){
-          temp_plot<- temp_source_data %>%
-            # filter(study_v == s, 
-            #        # interaction_type == i#, 
-            #        # direction == d
-            #        ) %>%
-            filter((interaction_type == "bacteria + bacteria" | combined == "EPEC + Cryptosporidium spp.")) %>%
-            my_kw_plots() +
-            labs(title = "Bacteria + Bacteria Pairs")
-          ggsave(path = "figures", filename = "BB_kw_plot.png", device = "png")
-                 # dev.off()
-                 
-          temp_plot<- temp_source_data %>%
-             # filter(study_v == s#, 
-             #        # interaction_type == i#, 
-             #        # direction == d
-             # ) %>%
-             filter(interaction_type == "bacteria + viruses" | combined == "Norovirus GII + Astrovirus") %>%
-             my_kw_plots() +
-             labs(title = "Bacteria + Virus Pairs")
-           ggsave(path = "figures", filename = "BV_kw_plot.png", device = "png")
-           # dev.off()
-        # }
-
-      # }
-    # }
-    
-  
-# }
            
-kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
+kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename, meanDaysDiarrhea = NA){
   #' @title KW final plots 
   #' 
   #' @description Plot the final results for the KW plots. Used for different 
@@ -1341,7 +1281,14 @@ kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
     readable_path_names(formatted = T) %>% 
     mutate(combined = paste(path1, path2, sep = " + ")) %>% distinct()
   
-
+  if(!is.na(meanDaysDiarrhea)){
+    temp_source_data <- temp_source_data %>% 
+      left_join(
+        meanDaysDiarrhea, 
+        by = c("study_v")
+      )
+  }
+  
   temp_plot<- temp_source_data %>%
     filter((interaction_type == "bacteria + bacteria" | combined == "EPEC + Cryptosporidium spp.")) %>%
     my_kw_plots() +
@@ -1357,17 +1304,87 @@ kw_plots <- function(kw_data, all_results_data, plot_title, plot_filename){
   
 }
 
-kw_plots(kw_pooled_dropped, all_simple_results, "Pooled", "pooled_samples")
+meanDaysDiarrhea <- data.frame(study_v = c("maled", "provide"), meanDaysDiarrhea = c(9.68, 18.6))
+# # for(i in interaction_types){
+#   # kw_pooled_dropped
+#     temp_source_data <- kw_pooled_dropped %>%
+#     left_join(
+#       all_simple_results %>% 
+#         # rank_pathogen_pairs() %>% 
+#         select_target_pathogens() %>%
+#       # get_top_ranked_pathogens(all_simple_results, shared = T) %>% 
+#         select(path1, path2, 
+#                # stool_type,
+#                # direction, 
+#                study, 
+#                # ave_rank
+#                ) %>% distinct() %>%  
+#         # arrange(ave_rank) 
+#       mutate(facet_idx = seq(nrow(.))), 
+#       by = c("path1", "path2", 
+#              # "stool" = "stool_type",
+#              "study_v" = "study")
+#     ) %>% 
+#     rowwise() %>% 
+#     mutate(interaction_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
+#       # group_by(path1, path2, study_v, interaction_type#, 
+#       #          # direction
+#       #          ) %>% mutate(facet_idx = mean(facet_idx, na.rm = T)) %>% ungroup() %>% 
+#       readable_path_names() %>% 
+#       mutate(combined = paste(path1, path2, sep = " + ")) %>% distinct()
+#     
+#     
+#     # for(s in unique(temp_source_data$study_v)){
+#       # for(d in unique((temp_source_data$direction))){
+#       #   valid_plot <- temp_source_data %>%
+#       #           filter(study_v == s, interaction_type == i, direction == d) %>% nrow() > 0
+#         # if(valid_plot){
+#           temp_plot<- temp_source_data %>%
+#             # filter(study_v == s, 
+#             #        # interaction_type == i#, 
+#             #        # direction == d
+#             #        ) %>%
+#             filter((interaction_type == "bacteria + bacteria" | combined == "EPEC + Cryptosporidium spp.")) %>%
+#             my_kw_plots() +
+#             labs(title = "Bacteria + Bacteria Pairs")
+#           ggsave(path = "figures", filename = "BB_kw_plot.png", device = "png")
+#                  # dev.off()
+#                  
+#           temp_plot<- temp_source_data %>%
+#              # filter(study_v == s#, 
+#              #        # interaction_type == i#, 
+#              #        # direction == d
+#              # ) %>%
+#              filter(interaction_type == "bacteria + viruses" | combined == "Norovirus GII + Astrovirus") %>%
+#              my_kw_plots() +
+#              labs(title = "Bacteria + Virus Pairs")
+#            ggsave(path = "figures", filename = "BV_kw_plot.png", device = "png")
+#            # dev.off()
+#         # }
+# 
+#       # }
+#     # }
+#     
+  
+# }
+# print("StartingTo Plot")
+# # A request by one of the co-authors that we include the average days iof diarrhea across the whole study, This is coming from the originally published data, 
+# # so this value is hard-coded in 
+# 
+kw_plots(kw_pooled_dropped, all_simple_results, "Pooled", "pooled_samples", meanDaysDiarrhea)
+
+kw_plots(kw_pooled_dropped_eitherstool, all_simple_results, "Pooled Either", "pooled_samples_either", meanDaysDiarrhea)
+
 
 # kw_pooled_dropped %>% View()
 
-kw_plots(kw_bystool_dropped %>% filter(stool == "Diarrhea"), all_simple_results, "By Stool", "bystool_diarrhea")
+kw_plots(kw_bystool_dropped %>% filter(stool == "Diarrhea"), all_simple_results, "By Stool", "bystool_diarrhea", meanDaysDiarrhea)
 
-kw_plots(kw_bystool_dropped %>% filter(stool == "Asymptomatic"), all_simple_results, "By Stool", "bystool_asymptomatic")
+kw_plots(kw_bystool_dropped %>% filter(stool == "Asymptomatic"), all_simple_results, "By Stool", "bystool_asymptomatic", meanDaysDiarrhea)
 
-kw_plots(kw_bystool_dropped_eitherstool %>% filter(stool == "Diarrhea"), all_simple_results, "By Stool Subset", "bystool_diarrhea2")
+kw_plots(kw_bystool_dropped_eitherstool %>% filter(stool == "Diarrhea"), all_simple_results, "Diarrheal Stools\n", "bystool_diarrhea2", meanDaysDiarrhea)
 
-kw_plots(kw_bystool_dropped_eitherstool %>% filter(stool == "Asymptomatic"), all_simple_results, "By Stool Subset", "bystool_asymptomatic2")
+kw_plots(kw_bystool_dropped_eitherstool %>% filter(stool == "Asymptomatic"), all_simple_results, "Asymptomatic Stools\n", "bystool_asymptomatic2", meanDaysDiarrhea)
 
 
 

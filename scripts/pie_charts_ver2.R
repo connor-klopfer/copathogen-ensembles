@@ -6,6 +6,7 @@
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
+library(ggtext)
 library(copathogenTools)
 
 source("scripts/load_all_results.R", echo = F)
@@ -17,23 +18,30 @@ MINIMUM_CO <- 10
 pie_plot_all_subsets <- function(d_f, original){
   # Plot all the subsets together. 
   
-  bb_plot <- plot_pie_chart(d_f, original, 
+  bb_plot <- plot_pathogen_bar_chart(d_f, original, 
                             plot_pair_type = "bacteria + bacteria", 
                             # my_plot_title = "Bacteria + bacteria pairs and their burden of diarrhea"#, 
                             # my_caption = "One bacteria + parasite pair included."
                             )
-  bv_plot  <- plot_pie_chart(d_f, original, plot_pair_type = "bacteria + viruses", 
+  bv_plot  <- plot_pathogen_bar_chart(d_f, original, plot_pair_type = "bacteria + viruses", 
                              # my_plot_title = "Bacteria + virus pairs and their burden of diarrhea"#, 
                              # my_caption = "One virus + virus pair included."
                              )
+  
+  # For curved bar charts: 
+  #   height: 10,
+  #   width: 12
+  
   # plot all. 
-  pdf('figures/copathogen_pie_charts_BB.pdf', onefile = TRUE, height = 10, 
-      width = 15)
+  pdf('figures/copathogen_bar_charts_BB.pdf', onefile = TRUE, 
+      height = 6, 
+      width = 8)
   print(bb_plot)
   dev.off()
   
-  pdf('figures/copathogen_pie_charts_BV.pdf', onefile = TRUE, height = 10, 
-      width = 15)
+  pdf('figures/copathogen_bar_charts_BV.pdf', onefile = TRUE, 
+      height = 6, 
+      width = 8)
   print(bv_plot)
   dev.off()
   
@@ -249,7 +257,7 @@ plot_pie_chart <- function(d_f, original,
       alpha = 0.8,
       fill = "white",
       fontface = "bold")+
-    coord_polar("y", start = 0)+
+    # coord_polar("y", start = 0)+
     geom_label(aes(
       size =factor(data_type),
       label = ifelse(diar_co > 0, paste0(round(diar_co/co_all, 2) * 100, "%"), ""),

@@ -82,6 +82,44 @@ print(prevalence_plot)
 dev.off()
 # ggsave(, print(prevalence_plot))
 
+my_theme <-   theme(panel.background = element_blank(), 
+                    panel.grid = element_line(color = "lightgray"), 
+                    panel.grid.minor = element_blank(),
+                    strip.background = element_rect(fill = "white"),
+                    axis.text = element_text(size = rel(1.6)),
+                    axis.title = element_text(size = rel(1.8)),
+                    plot.title = element_text(size = rel(2)), 
+                    legend.title = element_text(size = rel(1.8)),
+                    strip.text = element_text(size = rel(1.4)),
+                    legend.text = element_text(size = rel(1.2)) # strip.text = element_text(size = rel(1.1))
+)
+
+# Variable Names 
+# name_set <- get_target_pathogens(parent_dir = "data/")
+# # Variable names of Pathogens 
+# pathogen_name_set <- name_set %>% filter(ispathogen >0)
+
+complete_data %>% write.csv("data/complete_data.csv")
+
+copathogen_distributionsEDA <- complete_data %>%   combine_like_pathogens() %>% 
+  mutate(appended = paste(observation_id, participant, age, sep = "")) %>% 
+  tidyr::pivot_longer(
+    -c("participant", "study", "stool_type", "age", "collection_date", "observation_id", "country", "appended", "bin_12"), 
+    names_to = 'pathogen', 
+    values_to = 'present') %>%
+  group_by(study, appended, stool_type) %>% summarise(n_pathogens = sum(present, na.rm = T)) %>% group_by(study, stool_type, n_pathogens) %>% summarise(count = n()) %>% $
+  ggplot()+
+  geom_histogram(aes(x = as.integer(n_pathogens), fill = study), stat = 'count', position = 'identity', alpha = 0.5)+
+  facet_grid(.~stool_type)+
+  labs(title = "Number of Pathogens Per Observation", x = "Number of Distinct Pathogens", y = "Frequency")+
+  scale_fill_manual(values = two_var_coloring)+
+  scale_x_continuous(breaks = seq(0, 10, 1))+
+  my_theme 
+
+svg(file.path("figures", "EDACopathogenDistribution.svg"), width = 12)
+print(copathogen_distributionsEDA)
+dev.off()
+
 print("Number of Participants in dataset:")
 complete_data %>% 
   group_by(study) %>% 
