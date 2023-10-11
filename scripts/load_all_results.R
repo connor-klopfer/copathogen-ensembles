@@ -265,6 +265,40 @@ get_all_country_results <- function(original){
 
 # all_simple_results_old <- get_all_simple_results(original_df)
 
+##### Specific Partitions #####
+
+specific_partition_spec <- list()
+specific_partition_spec[[1]] <- list(
+  filename = "0ed92e64-950e-47e7-afaa-fefc65c8d6b8", 
+  study = "provide",
+  stool_type = "Diarrhea",
+  data_type = "complete_data"
+)
+
+specific_partition_spec[[2]] <- list(
+  filename = "4d99432e-7d69-43da-8584-8163c32ec89b", 
+  study = "provide",
+  stool_type = "Asymptomatic",
+  data_type = "complete_data"
+)
+
+specific_partition_spec[[3]] <- list(
+  filename = "4f23039c-bc04-4032-b31e-7f0964aa9ff3", 
+  study = "maled",
+  stool_type = "Diarrhea",
+  data_type = "complete_data"
+)
+
+specific_partition_spec[[4]] <- list(
+  filename = "9ebfb5e0-9dd6-42ea-ab04-ff3a60e67ab2", 
+  study = "maled",
+  stool_type = "Asymptomatic",
+  timepoint = "timepoint", 
+  data_type = "complete_data"
+)
+
+
+
 ##### 12 Month Partitions: By Age #####
 
 month_byage_specs <- list()
@@ -300,7 +334,7 @@ month_byage_specs[[4]] <- list(
   data_type = "complete_data"
 )
 
-get_timeseries_results <- function(original_dataset, specs, ts, parent_dir = "../data/", ci = 0.95){
+get_timeseries_results <- function(original_dataset, specs, ts, parent_dir ="vacc_trained/appended_datatables/EXP_", ci = 0.95){
   #' Append all the results for the configuration model togeher for timeseries models.
   #'
   #' @description Rather than individual datasets and repitiion, loop through all the filenames,
@@ -314,7 +348,7 @@ get_timeseries_results <- function(original_dataset, specs, ts, parent_dir = "..
   #' @param ts string containing the name of the variable to partition the timeseries by
   temp_list <- list()
   for(x in 1:length(specs)){
-    temp_list[[x]] <- readr::read_csv(paste(parent_dir, "vacc_trained/appended_datatables/EXP_", specs[[x]][["filename"]], ".csv", sep = "")) %>%
+    temp_list[[x]] <- readr::read_csv(paste(parent_dir, specs[[x]][["filename"]], ".csv", sep = "")) %>%
       as.data.frame() %>%
       process_ci_df(confidence_interval = ci) %>%
       get_diar_fraction(original_dataset, specs[[x]][["study"]], ts) %>%
