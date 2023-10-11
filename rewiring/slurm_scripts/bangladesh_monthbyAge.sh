@@ -1,0 +1,11 @@
+#!/bin/bash
+python --version
+C:/Users/cklop/Anaconda3/envs/copath/python.exe main.py -study maled -n 10 -r 15000 -t "Maled_Asym_ageByMonth_tp_24Jul23" -u False -c "Partitioning the network in to month bins by age. This run expeludes the c.jejuni/coli and only uses campy pan. Using the 60m update from MAL-ED. Using specific timepoints." -f simple_noncondensed_all_countries_01Jun21.csv -stool asym -partition_type ageByMonth -se True -opv False -multip True -bystool True -jobid %j -script_name %x -country Bangladesh
+
+C:/Users/cklop/Anaconda3/envs/copath/python.exe main.py -study maled -n 10 -r 15000 -t "Maled_Sym_ageByMonth_tp_24Jul23" -u False -c "Partitioning the network in to month bins by age. This run expeludes the c.jejuni/coli and only uses campy pan. Using the 60m update from MAL-ED. Using ageByMonth timepoints." -f simple_noncondensed_all_countries_01Jun21.csv -stool sym -partition_type ageByMonth -se True -opv False -multip True -bystool True -jobid %j -script_name %x -country Bangladesh
+
+# Balgadesh PROVIDE
+
+C:/Users/cklop/Anaconda3/envs/copath/python.exe main.py -study provide -n 10 -r 15000 -t "Provide_Sym_ageByMonth_tp_24Jul23" -u False -c "Partitioning the network in to month bins by age. This run expeludes the c.jejuni/coli and only uses campy pan. Using the 60m update from MAL-ED. Using ageByMonth timepoints." -f simple_noncondensed_all_countries_01Jun21.csv -stool sym -partition_type ageByMonth -se True -opv False -multip True -bystool True -jobid %j -script_name %x -country Bangladesh
+
+C:/Users/cklop/Anaconda3/envs/copath/python.exe main.py -study provide -n 10 -r 15000 -t "Provide_Asym_ageByMonth_tp_24Jul23" -u False -c "Partitioning the network in to month bins by age. This run expeludes the c.jejuni/coli and only uses campy pan. Using the 60m update from MAL-ED. Using ageByMonth timepoints." -f simple_noncondensed_all_countries_01Jun21.csv -stool asym -partition_type specific -se True -opv False -multip True -bystool True -jobid %j -script_name %x -country Bangladesh

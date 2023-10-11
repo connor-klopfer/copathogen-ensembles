@@ -33,15 +33,15 @@ pie_plot_all_subsets <- function(d_f, original){
   #   width: 12
   
   # plot all. 
-  pdf('figures/copathogen_bar_charts_BB.pdf', onefile = TRUE, 
+  pdf('figures/copathogen_bar_charts_BB_alt2.pdf', onefile = TRUE, 
       height = 6, 
-      width = 8)
+      width = 10)
   print(bb_plot)
   dev.off()
   
-  pdf('figures/copathogen_bar_charts_BV.pdf', onefile = TRUE, 
+  pdf('figures/copathogen_bar_charts_BV_alt2.pdf', onefile = TRUE, 
       height = 6, 
-      width = 8)
+      width = 10)
   print(bv_plot)
   dev.off()
   
@@ -145,6 +145,38 @@ label_pathogen_pair <- function(path1, path2){
   return(paste(sort(c(path1_temp, path2_temp)), collapse = " + "))
 }
 
+
+generate_pi_chart_data <- function(d_f, path_combos){
+  return(d_f %>% filter(
+    actual > MINIMUM_CO
+  ) %>% 
+    # Watch here, this might remove pairs that shouldn't be removed. 
+    readable_path_names(formatted = T) %>% 
+    rowwise() %>%
+    mutate(combined = paste(path1, path2, sep = "+"))%>% 
+    filter(combined %in% path_combos) %>% 
+    # Group by pathogen pair, and stool type, not direction
+    group_by(combined, stool_type) %>% 
+    # Get the sum of all co-occurences, and diarrheal co-occurences
+    summarise(diar_co = sum(diar_co), co_all = sum(co_all), n_obs = sum(n_obs), n_diar = sum(n_obs * diar_fraction),  n_asym = sum(n_obs * (1-diar_fraction)), .groups = "keep") %>% 
+    # It doubles for pathogens pairs that appear in bothDiarrhea and Aymptomatic stools. Take the mean to fix this. 
+    ungroup() %>% group_by(combined) %>% summarise(diar_co = mean(diar_co), co_all = mean(co_all), n_obs = mean(n_obs), n_diar = mean(n_diar), n_asym = mean(n_asym), .groups = "keep") %>% 
+    # mutate(n_diar = n_obs * diar_fraction, n_asym = n_obs * (1-diar_fraction)) %>% 
+    mutate(diar_co_proportion = diar_co / n_diar, asym_co_proportion = (co_all-diar_co)/n_asym) %>% 
+    mutate(
+      diar_CI_lower = Hmisc::binconf(diar_co, n_diar, method ="wilson")[2], 
+      diar_CI_higher = Hmisc::binconf(diar_co, n_diar, method = "wilson")[3],
+      asym_CI_lower = Hmisc::binconf(co_all-diar_co, n_asym, method ="wilson")[2], 
+      asym_CI_higher = Hmisc::binconf(co_all-diar_co, n_asym, method = "wilson")[3],
+      low_alt = diar_CI_lower / asym_CI_higher,
+      high_alt = diar_CI_higher / asym_CI_lower
+      ) %>% # CIS here
+    mutate(alt_metric = diar_co_proportion/asym_co_proportion) %>% 
+    mutate(diar_fraction = diar_co/co_all) %>% ungroup() %>% 
+    select(combined, diar_co, co_all, diar_fraction, alt_metric, diar_co_proportion, asym_co_proportion, diar_CI_lower, diar_CI_higher, asym_CI_lower, asym_CI_higher, low_alt, high_alt) )
+  
+}
+
 plot_pie_chart <- function(d_f, original, 
                            plot_pair_type = "bacteria + bacteria", 
                            my_plot_title = "", 
@@ -165,27 +197,13 @@ plot_pie_chart <- function(d_f, original,
     filter(combined %in% target_pathogens) %>% 
     distinct(combined) %>% unlist()
   
-  # print(path_combos)
+  print(path_combos)
   
   # Build the dataframe that serves as the basis for the whole plot. 
-  count_data <- d_f %>% filter(
-    actual > MINIMUM_CO
-  ) %>% 
-    # Watch here, this might remove pairs that shouldn't be removed. 
-    readable_path_names(formatted = T) %>% 
-    rowwise() %>%
-    mutate(combined = paste(path1, path2, sep = "+"))%>% 
-    filter(combined %in% path_combos) %>% 
-    # Group by pathogen pair, and stool type, not direction
-    group_by(combined, stool_type) %>% 
-    # Get the sum of all co-occurences, and diarrheal co-occurences
-    summarise(diar_co = sum(diar_co), co_all = sum(co_all), .groups = "keep") %>% 
-    # It doubles for pathogens pairs that appear in bothDiarrhea and Aymptomatic stools. Take the mean to fix this. 
-    ungroup() %>% group_by(combined) %>% summarise(diar_co = mean(diar_co), co_all = mean(co_all), .groups = "keep") %>% 
-    mutate(diar_fraction = diar_co/co_all) %>% ungroup() %>% 
-    select(combined, diar_co, co_all, diar_fraction) %>% 
+  count_data <- d_f %>% generate_pi_chart_data(path_combos)%>% 
     mutate(data_type = bar_size, ordering = diar_co/co_all) %>% ungroup() %>% 
-    mutate(combined_label = paste(combined, " (N = ", co_all, ")", sep = "")) 
+    # mutate(combined_label = paste(combined, " (N = ", co_all, ")", sep = "")) 
+    mutate(combined_label = combined) 
   
   # Re-arrange the pathogen pairs
   path_combos <- count_data %>% 
@@ -200,7 +218,7 @@ plot_pie_chart <- function(d_f, original,
   blank_label <- " "
   
   count_data <- rbind(count_data, 
-                      c(blank_label, 0, 1, bar_size, 0, blank_label)
+                      c(blank_label, 0, 1, 0, bar_size, 0, blank_label)
   ) %>% 
     mutate(diar_co = as.numeric(diar_co), co_all = as.numeric(co_all), data_type = as.numeric(data_type), 
            ordering = as.numeric(ordering)) 
@@ -211,7 +229,7 @@ plot_pie_chart <- function(d_f, original,
   title_segment_2 <- "\nthan expected due to prevalence."
   
   plot_title <- paste(c(title_segment_1,"blah", title_segment_2), collapse = "")
-  
+  plot_title <- 
   # path_colors_and_combos <- get_pathogens_and_colors(path_combos)
 
   count_data$combined_label <- factor(reorder(count_data$combined_label, count_data$ordering), ordered = T)
@@ -236,11 +254,14 @@ plot_pie_chart <- function(d_f, original,
     names(pathogen_colors)[p] <- names(target_pathogens)[pathogen_idx]
   }
 
-  final_pie <- count_data %>% ungroup() %>% 
+  final_pie <- count_data %>% ungroup() %>%  mutate(alt_metric = as.numeric(alt_metric)) %>%
     ggplot(aes(
       # x = factor(reorder(combined_label,  ordering), ordered = T),
       x = combined_label,
-      width = data_type, y = diar_co/co_all))+
+      width = data_type, 
+      # y = diar_co/co_all, 
+      y = alt_metric
+      ))+
     geom_bar(aes(
       # fill = factor(reorder(combined_label, ordering), ordered = T)),
       fill = combined_label),
@@ -249,7 +270,7 @@ plot_pie_chart <- function(d_f, original,
     )+
     geom_label(
       aes(
-        y = (diar_co/co_all) * 1.01,
+        y = (alt_metric) * 1.01,
         label = ifelse(diar_co > 0, diar_co, ""), 
         size =factor(data_type)),
       label.size = 0,
@@ -260,7 +281,7 @@ plot_pie_chart <- function(d_f, original,
     # coord_polar("y", start = 0)+
     geom_label(aes(
       size =factor(data_type),
-      label = ifelse(diar_co > 0, paste0(round(diar_co/co_all, 2) * 100, "%"), ""),
+      label = ifelse(diar_co > 0, paste0(round(alt_metric) * 100, "%"), ""),
       hjust = 0,
       y = 0),
       alpha = 0.8, fill = "white",
@@ -275,7 +296,7 @@ plot_pie_chart <- function(d_f, original,
     )+
     labs(x = "", y = "", title = my_plot_title, fill = "Pathogen Pair", 
          caption = paste("*", my_caption))+
-    ylim(0, 1)+
+    # ylim(0, 1)+
     theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank(),
           axis.text.x = element_blank(),
@@ -288,6 +309,149 @@ plot_pie_chart <- function(d_f, original,
   return(final_pie)
 }
 
+
+plot_pathogen_bar_chart <- function(d_f, original, 
+         plot_pair_type = "bacteria + bacteria", 
+         my_plot_title = "", 
+         my_caption = ""){
+  bar_size <- 0.8
+  
+  target_pathogens <- get_target_pairs()
+  
+  path_combos <- d_f %>% 
+    rowwise() %>% 
+    mutate(pair_type = label_pathogen_pair(path1, path2)) %>% ungroup() %>% 
+    readable_path_names(formatted = T) %>% 
+    rowwise() %>%
+    mutate(combined = paste(path1, path2, sep = "+")) %>% 
+    filter(pair_type == plot_pair_type | 
+             (plot_pair_type == "bacteria + bacteria" & combined == "EPEC+*Cryptosporidium* spp.") |
+             (plot_pair_type == "bacteria + viruses" & combined == "Norovirus GII+Astrovirus")) %>%
+    filter(combined %in% target_pathogens) %>% 
+    distinct(combined) %>% unlist()
+  
+  print(path_combos)
+  
+  # Build the dataframe that serves as the basis for the whole plot. 
+  count_data <- d_f %>% generate_pi_chart_data(path_combos)%>% 
+    mutate(data_type = bar_size, ordering = diar_co/co_all) %>% ungroup() %>% 
+    mutate(combined_label = paste(combined, " (N = ", co_all, ")", sep = ""))
+    # mutate(combined_label = combined) 
+  
+  # Re-arrange the pathogen pairs
+  path_combos <- count_data %>% 
+    arrange(as.numeric(ordering)) %>% 
+    # distinct(combined_label) %>%
+    pull(combined_label) 
+  
+  
+  count_data <- count_data %>% select(-diar_fraction)
+  
+  # Add in the null column to add spacing in the middle chart 
+  blank_label <- " "
+  
+  count_data <- rbind(count_data#,
+                      #                     c(blank_label, 0, 1, bar_size, 0, blank_label)
+  ) %>% 
+    mutate(diar_co = as.numeric(diar_co), co_all = as.numeric(co_all), data_type = as.numeric(data_type), 
+           ordering = as.numeric(ordering)) 
+  
+  count_data$combined_label[is.na(count_data$combined_label)] <- blank_label
+  
+  title_segment_1 <- "Percent diarrhea where pathogen pairs were found. Pairs were "
+  title_segment_2 <- "\nthan expected due to prevalence."
+  
+  plot_title <- paste(c(title_segment_1,"blah", title_segment_2), collapse = "")
+  
+  count_data$combined_label <- factor(reorder(count_data$combined_label, count_data$ordering), ordered = T)
+  
+  pathogen_colors <- target_pathogens[which(target_pathogens %in% count_data$combined)]
+  
+  pathogen_colors <- vector(mode = "character", length = nrow(count_data))
+  
+  count_data <- count_data %>% arrange(ordering)
+  
+  for(p in 1:nrow(count_data)){
+    pathogen_idx <- which(target_pathogens == count_data$combined[p])
+    # print(pathogen_idx)
+    if(length(pathogen_idx) > 1){
+      print(count_data$combined[p])
+    }
+    # print(as.character(count_data$combined_label[pathogen_idx]))
+    pathogen_colors[p] <- as.character(count_data$combined_label[count_data$combined == target_pathogens[pathogen_idx]])
+    names(pathogen_colors)[p] <- names(target_pathogens)[pathogen_idx]
+  }
+  
+  # View(count_data, title = paste("count_data", plot_pair_type))
+  print(paste("Results for", plot_title))
+  count_data %>% ungroup() %>% 
+    mutate(
+      alt_metric = as.numeric(alt_metric), 
+      diar_co_proportion = as.numeric(diar_co_proportion), 
+      asym_co_proportion = as.numeric(asym_co_proportion)) %>%
+    mutate(
+      barLabel = paste(round(diar_co_proportion, 3)*100, "% / ", round(asym_co_proportion, 3)*100, "%", sep = "")) %>% 
+    print()
+  
+  final_pie <- count_data %>% ungroup() %>% mutate(alt_metric = as.numeric(alt_metric), diar_co_proportion = as.numeric(diar_co_proportion), asym_co_proportion = as.numeric(asym_co_proportion)) %>%
+    # rowwise() %>% 
+    mutate(barLabel = paste(round(diar_co_proportion, 3)*100, "% / ", round(asym_co_proportion, 3)*100, "%", sep = "")) %>% 
+    ggplot(aes(
+      # x = factor(reorder(combined_label,  ordering), ordered = T),
+      x = combined_label,
+      width = data_type, y = alt_metric))+
+    geom_bar(aes(
+      # fill = factor(reorder(combined_label, ordering), ordered = T)),
+      fill = combined_label),
+      stat = "identity", 
+      position = position_dodge2(preserve = "single"),
+    )+
+    # geom_hline(aes(yintercept = 0.5), linetype = "dashed", alpha = 0.6, gray = "gray30", size = 1.2)+
+    geom_label(
+      aes(
+        y = (alt_metric) * 1.01,
+        label = ifelse(diar_co > 0, barLabel, ""), 
+        size =factor(data_type)),
+      label.size = 0,
+      hjust = -.08,
+      alpha = 0.8,
+      fill = "white",
+      fontface = "bold")+
+    # coord_polar("y", start = 0)+
+    # geom_label(aes(
+    #   size = factor(data_type),
+    #   label = ifelse(diar_co > 0, paste0(round(diar_co/co_all, 2) * 100, "%"), ""),
+    #   hjust = 0,
+    #   y = 0),
+    #   alpha = 0.8, fill = "white",
+    #   label.size = 0,
+    #   fontface = "bold")+
+    scale_size_manual(values = c(5,7), guide = "none")+
+    scale_fill_manual(values = rev(names(pathogen_colors)),
+                      breaks =  rev(pathogen_colors),
+                      # drop = FALSE
+                      # na.value = "white"
+                      guide = "none"
+    )+
+    labs(
+      y = "Ratio of co-infection rate in diarrheal stools compared \nto co-infection rate in asymptomatic stools", 
+      # y = "Percent of Co-occurences found in Diarrhea", 
+      x = "", title = my_plot_title, fill = "Pathogen Pair")+
+    ylim(0, 11)+
+    theme(
+      axis.text.y = element_markdown(size = rel(1.5)),
+      axis.ticks.y = element_line(color = "black"),
+      axis.text.x = element_text(size = rel(1.2)),
+      panel.background = element_rect(fill = NA, color = "black"),
+      legend.text = element_markdown(size = rel(1.5)),
+      legend.title = element_text(size = rel(1.7)),
+      legend.key.height = unit(1, 'cm'),
+      panel.grid.major = element_line(color = "gray"),
+      plot.title = element_text(size = rel(2)),
+      panel.grid.minor.y = element_line(color = "gray"))+
+    coord_flip()
+  return(final_pie)
+}
 
 sort_pathogen_pairs <- function(path1, path2){
   # print(path1)
